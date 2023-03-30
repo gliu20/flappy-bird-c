@@ -36,10 +36,12 @@
 /* Flappy bird specific constants */
 #define NUM_PIPES 10
 #define PIPE_COLOR GREEN
+#define PIPE_WIDTH 15
+#define PIPE_VOID_HEIGHT 20
 
 #define MODE_MENU 0
 #define MODE_GAME 1
-#define MODE_DEAD 2
+#define MODE_GAME_OVER 2
 
 /* Macro for absolute value */
 #define ABS(x) (((x) > 0) ? (x) : -(x))
@@ -52,6 +54,7 @@
 
 
 volatile int pixel_buffer_start;
+volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
 
 // Global state
 typedef struct bird {
@@ -93,8 +96,15 @@ typedef struct game_state {
 
 
 
+// Initializers
+void initalize_game(game_state_t *game);
+void initialize_pipe(pipe_t *pipe);
+void initialize_pipes(pipe_t pipes[]);
+void initialize_bird(bird_t *bird);
+void intialize_screen();
+
+
 // Helpers
-void swap(int *a, int *b);
 int clamp(int x, int min, int max);
 
 // Graphics
@@ -102,19 +112,62 @@ void draw_pixel(int x, int y, color_t line_color);
 void draw_rect(int x0, int y0, int x1, int y1, color_t line_color);
 void draw_pipe(pipe_t pipe);
 
-
+void next_frame();
 void clear_screen();
-void wait_for_vsync(volatile int *pixel_ctrl_ptr);
+void wait_for_vsync();
 
-// Game state
-void do_intialize();
+int main(void) {
+    game_state_t game;
+    
+    initalize_game(&game);
+    intialize_screen();
 
-int main(void)
-{
-    volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
-    // declare other variables(not shown)
-    // initialize location and direction of rectangles(not shown)
+    while (true) {
+        clear_screen();
+        switch (game.mode) {
+            case MODE_GAME: draw_game(&game); break;
+            case MODE_GAME_OVER: draw_game_over(&game); break;
+            case MODE_MENU: draw_menu(&game); break;
 
+            // By default, go to menu
+            default: draw_menu(&game); break;
+        }
+    }
+}
+
+
+// Initializers
+void initalize_game(game_state_t *game) {
+    // TODO @debug for testing we start at MODE_GAME
+    // In practice, we want to change this to MODE_MENU
+    game->mode = MODE_GAME;
+    game->score = 0;
+
+    initalize_pipes(game->pipes);
+    initalize_bird(game->bird);
+}
+
+void initialize_pipe(pipe_t *pipe) {
+    pipes->x = 0;
+    pipes->y = 0;
+    pipes->width = PIPE_WIDTH;
+    pipes->void_height = PIPE_VOID_HEIGHT;
+}
+
+void initialize_pipes(pipe_t pipes[]) {
+    for (int i = 0; i < NUM_PIPES; i++) {
+        initialize_pipe(&pipes[i]);
+    }
+}
+
+void initialize_bird(bird_t *bird) {
+    bird->x = 0;
+    bird->y = 0;
+    bird->y_velocity = -1;
+    bird->angle = 0;
+}
+
+void intialize_screen() {
     /* set front pixel buffer to start of FPGA On-chip memory */
     *(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
                                         // back buffer
@@ -127,31 +180,10 @@ int main(void)
     *(pixel_ctrl_ptr + 1) = 0xC0000000;
     pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
     clear_screen(); // pixel_buffer_start boxs to the pixel buffer
-
-
-    do_intialize();
-
-    while (1)
-    {
-        // Clear
-
-        // Draw
-
-        wait_for_vsync(pixel_ctrl_ptr); // swap front and back buffers on VGA vertical sync
-        pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer
-    }
 }
 
-void do_intialize() {
 
-}
-
-void swap(int *a, int *b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
+// Graphics
 int clamp(int x, int min, int max) {
     if (x > max) return max;
     if (x < min) return min;
@@ -168,18 +200,22 @@ void draw_pixel(int x, int y, color_t line_color) {
     *(color_t *)(pixel_buffer_start + (y << 10) + (x << 1)) = line_color;
 }
 
-
-// Draws a rectangle where the coordinates are as specified:
-// x0, y0 is top left corner
-// x1, y1 is bottom right corner
+/**
+ * Draws a rectangle where the coordinates are as specified
+ * Note: We expect x0 < x1 and y0 < y1
+ * @param x0 - top left corner
+ * @param y0 - top left corner
+ * @param x1 - bottom right corner
+ * @param y1 - bottom right corner
+ * @param line_color - color
+*/
 void draw_rect(int x0, int y0, int x1, int y1, color_t line_color) {
     for (int x = x0; x < x1; x++) {
         for (int y = y0; y < y1; y++) {
-            plot_pixel(x, y, line_color);
+            draw_pixel(x, y, line_color);
         }
     }
 }
-
 
 void draw_pipe(pipe_t pipe) {
     int x0 = pipe.x - (pipe.width / 2);
@@ -200,15 +236,33 @@ void draw_pipe(pipe_t pipe) {
     draw_rect(x0, y_bottom_pipe_edge, x1, y_screen_bottom, PIPE_COLOR);
 }
 
+void draw_game(game_state_t *game) {
+    while (!is_game_over(game)) {
+
+        next_frame();
+    }
+}
+
+void draw_background() {
+
+}
+
+// Screen/VGA
 void clear_screen() {
     for (int x = 0; x < RESOLUTION_X; x++) {
         for (int y = 0; y < RESOLUTION_Y; y++) {
-            plot_pixel(x, y, BLACK);
+            draw_pixel(x, y, BLACK);
         }
     }
 }
 
-void wait_for_vsync(volatile int *pixel_ctrl_ptr) {
+void next_frame() {
+    // Swap front and back buffers on vsync and update buffer pointer
+    wait_for_vsync(pixel_ctrl_ptr);
+    pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+}
+
+void wait_for_vsync() {
     volatile int *status = pixel_ctrl_ptr + 3;
 
     // Write one to buffer register to request Vsync
