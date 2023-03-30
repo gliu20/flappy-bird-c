@@ -97,11 +97,11 @@ typedef struct game_state {
 
 
 // Initializers
-void initalize_game(game_state_t *game);
+void initialize_game(game_state_t *game);
 void initialize_pipe(pipe_t *pipe);
 void initialize_pipes(pipe_t pipes[]);
 void initialize_bird(bird_t *bird);
-void intialize_screen();
+void initialize_screen();
 
 
 // Helpers
@@ -111,7 +111,15 @@ int clamp(int x, int min, int max);
 void draw_pixel(int x, int y, color_t line_color);
 void draw_rect(int x0, int y0, int x1, int y1, color_t line_color);
 void draw_pipe(pipe_t pipe);
+void draw_game(game_state_t *game);
+void draw_game_over(game_state_t *game);
+void draw_menu(game_state_t *game);
+void draw_background();
 
+// Game logic
+bool is_game_over(game_state_t *game);
+
+// Screen/VGA
 void next_frame();
 void clear_screen();
 void wait_for_vsync();
@@ -119,8 +127,8 @@ void wait_for_vsync();
 int main(void) {
     game_state_t game;
     
-    initalize_game(&game);
-    intialize_screen();
+    initialize_game(&game);
+    initialize_screen();
 
     while (true) {
         clear_screen();
@@ -137,21 +145,21 @@ int main(void) {
 
 
 // Initializers
-void initalize_game(game_state_t *game) {
+void initialize_game(game_state_t *game) {
     // TODO @debug for testing we start at MODE_GAME
     // In practice, we want to change this to MODE_MENU
     game->mode = MODE_GAME;
     game->score = 0;
 
-    initalize_pipes(game->pipes);
-    initalize_bird(game->bird);
+    initialize_pipes(game->pipes);
+    initialize_bird(&game->bird);
 }
 
 void initialize_pipe(pipe_t *pipe) {
-    pipes->x = 0;
-    pipes->y = 0;
-    pipes->width = PIPE_WIDTH;
-    pipes->void_height = PIPE_VOID_HEIGHT;
+    pipe->x = 0;
+    pipe->y = 0;
+    pipe->width = PIPE_WIDTH;
+    pipe->void_height = PIPE_VOID_HEIGHT;
 }
 
 void initialize_pipes(pipe_t pipes[]) {
@@ -167,7 +175,7 @@ void initialize_bird(bird_t *bird) {
     bird->angle = 0;
 }
 
-void intialize_screen() {
+void initialize_screen() {
     /* set front pixel buffer to start of FPGA On-chip memory */
     *(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
                                         // back buffer
@@ -243,9 +251,29 @@ void draw_game(game_state_t *game) {
     }
 }
 
+void draw_game_over(game_state_t *game) {
+    while (true) {
+
+        next_frame();
+    }
+}
+
+void draw_menu(game_state_t *game) {
+    while (true) {
+
+        next_frame();
+    }
+}
+
 void draw_background() {
 
 }
+
+// Game logic
+bool is_game_over(game_state_t *game) {
+    return false;
+}
+
 
 // Screen/VGA
 void clear_screen() {
