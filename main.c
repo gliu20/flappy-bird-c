@@ -38,18 +38,25 @@
 #define RESOLUTION_Y 240
 
 /* Flappy bird specific constants */
+/* Pipes */
 #define NUM_PIPES 10
 #define PIPE_COLOR GREEN
 #define PIPE_WIDTH 15
 #define PIPE_VOID_HEIGHT 20
-#define BIRD_WIDTH 17
-#define BIRD_HEIGHT 12
+/* Birds */
+#define BIRD_WIDTH 34
+#define BIRD_HEIGHT 24
+#define BIRD_INITIAL_X 20
+#define BIRD_INITIAL_Y 100
+#define BIRD_INITIAL_VELOCITY -1
+#define BIRD_INITIAL_ANGLE 0
 
+/* Modes */
 #define MODE_MENU 0
 #define MODE_GAME 1
 #define MODE_GAME_OVER 2
 
-/* Constants for background */
+/* Background */
 #define GROUND_THICKNESS 20
 #define GRASS_THICKNESS 10
 #define SKY_THICKNESS 210
@@ -63,7 +70,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-
+#include <string.h>
 
 
 volatile int pixel_buffer_start;
@@ -127,7 +134,7 @@ void draw_pipe(pipe_t pipe);
 void draw_bird(bird_t bird);
 void draw_game(game_state_t *game);
 void draw_game_over(game_state_t *game);
-void draw_menu(game_state_t *game);
+void draw_menu(game_state_t *game, bird_t bird);
 void draw_grass();
 void draw_background();
 
@@ -146,8 +153,10 @@ void wait_for_vsync();
 
 int main(void) {
     game_state_t game;
-    
+    bird_t bird;
+
     initialize_game(&game);
+    initialize_game(&bird);
     initialize_screen();
 
     while (true) {
@@ -155,10 +164,10 @@ int main(void) {
         switch (game.mode) {
             case MODE_GAME: draw_game(&game); break;
             case MODE_GAME_OVER: draw_game_over(&game); break;
-            case MODE_MENU: draw_menu(&game); break;
+            case MODE_MENU: draw_menu(&game, bird); break;
 
             // By default, go to menu
-            default: draw_menu(&game); break;
+            default: draw_menu(&game, bird); break;
         }
     }
 }
@@ -189,10 +198,10 @@ void initialize_pipes(pipe_t pipes[]) {
 }
 
 void initialize_bird(bird_t *bird) {
-    bird->x = 0;
-    bird->y = 0;
-    bird->y_velocity = -1;
-    bird->angle = 0;
+    bird->x = BIRD_INITIAL_X;
+    bird->y = BIRD_INITIAL_Y;
+    bird->y_velocity = BIRD_INITIAL_VELOCITY;
+    bird->angle = BIRD_INITIAL_ANGLE;
 }
 
 void initialize_screen() {
@@ -265,7 +274,7 @@ void draw_pipe(pipe_t pipe) {
 }
 
 void draw_bird(bird_t bird){
-    //will use this to draw bird: https://www.pinterest.com/pin/559924166147577544/
+    //will use this * 2 (in terms of the size) to draw bird: https://www.pinterest.com/pin/559924166147577544/
 
     draw_rect(bird.x, bird.y, bird.x + BIRD_WIDTH - 1, bird.y + BIRD_HEIGHT - 1, ORANGE);
 }
@@ -278,14 +287,33 @@ void draw_game(game_state_t *game) {
 }
 
 void draw_game_over(game_state_t *game) {
-    while (true) {
+    while (game -> mode == MODE_GAME_OVER) {
+        draw_background();
+
+        //display "GAME OVER"
+        //display "SCORE: "
+        //display "PRESS ENTER TO RESTART"
+        char text_for_game_state[] = "GAME OVER\0";
+        char text_for_score[] = "GAME OVER\0";
+        char text_to_display[] = "PRESS ENTER TO RESTART\0";
+
+        //use character buffer
 
         next_frame();
     }
 }
 
-void draw_menu(game_state_t *game) {
-    while (true) {
+void draw_menu(game_state_t *game, bird_t bird) {
+    while (game -> mode == MODE_MENU) {
+        draw_background();
+        draw_bird(bird);
+
+        //display "FLAPPY BIRD"
+        //display "PRESS ENTER TO START"
+        char text_for_game_name[] = "FLAPPY BIRD\0";
+        char text_to_display[] = "PRESS ENTER TO START\0";
+
+        //use character buffer
 
         next_frame();
     }
