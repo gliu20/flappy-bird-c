@@ -133,6 +133,7 @@ void initialize_screen();
 
 // Helpers
 int clamp(int x, int min, int max);
+void video_text(int x, int y, char * text_ptr);
 
 // Graphics
 void draw_pixel(int x, int y, color_t line_color);
@@ -337,6 +338,8 @@ void draw_menu(game_state_t *game) {
         char text_to_display[] = "PRESS ENTER TO START\0";
 
         //use character buffer
+        video_text(44, 15, text_for_game_name);
+        video_text(40, 44, text_to_display);
 
         next_frame();
     }
@@ -474,3 +477,17 @@ void wait_for_vsync() {
         if (((*status) & 1) == 0) return;
     }
 }
+
+//taken from DE1-SoC_Computer_ARM.pdf
+void video_text(int x, int y, char * text_ptr) {
+    int offset;
+    volatile char * character_buffer = (char *)FPGA_CHAR_BASE; // video character buffer
+    /* assume that the text string fits on one line */
+    offset = (y << 7) + x;
+    while (*(text_ptr)) {
+        *(character_buffer + offset) = *(text_ptr); // write to the character buffer
+        ++text_ptr;
+        ++offset;
+    }
+}
+
