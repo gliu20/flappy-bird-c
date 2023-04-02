@@ -40,10 +40,12 @@
 
 /* Flappy bird specific constants */
 /* Pipes */
-#define NUM_PIPES 10
+#define NUM_PIPES 5
 #define PIPE_COLOR GREEN
-#define PIPE_WIDTH 15
-#define PIPE_VOID_HEIGHT 20
+#define PIPE_WIDTH 30
+#define PIPE_VOID_HEIGHT 40
+#define PIPE_SPACING 90
+
 /* Birds */
 #define BIRD_WIDTH 34
 #define BIRD_HEIGHT 24
@@ -123,7 +125,7 @@ typedef struct game_state {
 
 // Initializers
 void initialize_game(game_state_t *game);
-void initialize_pipe(pipe_t *pipe);
+void initialize_pipe(pipe_t *pipe, int i);
 void initialize_pipes(pipe_t pipes[]);
 void initialize_bird(bird_t *bird);
 void initialize_screen();
@@ -159,10 +161,8 @@ void wait_for_vsync();
 
 int main(void) {
     game_state_t game;
-    bird_t bird;
 
     initialize_game(&game);
-    initialize_game(&bird);
     initialize_screen();
 
     while (true) {
@@ -190,16 +190,16 @@ void initialize_game(game_state_t *game) {
     initialize_bird(&game->bird);
 }
 
-void initialize_pipe(pipe_t *pipe) {
-    pipe->x = 0;
-    pipe->y = 0;
+void initialize_pipe(pipe_t *pipe, int i) {
+    pipe->x = i * PIPE_SPACING;
+    pipe->y = rand() % (RESOLUTION_Y - PIPE_VOID_HEIGHT * 2) + PIPE_VOID_HEIGHT;
     pipe->width = PIPE_WIDTH;
     pipe->void_height = PIPE_VOID_HEIGHT;
 }
 
 void initialize_pipes(pipe_t pipes[]) {
     for (int i = 0; i < NUM_PIPES; i++) {
-        initialize_pipe(&pipes[i]);
+        initialize_pipe(&pipes[i], i);
     }
 }
 
@@ -279,6 +279,12 @@ void draw_pipe(pipe_t pipe) {
     draw_rect(x0, y_bottom_pipe_edge, x1, y_screen_bottom, PIPE_COLOR);
 }
 
+void draw_pipes(pipe_t pipes[]) {
+    for (int i = 0; i < NUM_PIPES; i++) {
+        draw_pipe(pipes[i]);
+    }
+}
+
 void draw_bird(bird_t bird){
     //will use this * 2 (in terms of the size) to draw bird: https://www.pinterest.com/pin/559924166147577544/
 
@@ -286,9 +292,18 @@ void draw_bird(bird_t bird){
 }
 
 void draw_game(game_state_t *game) {
-    while (!is_game_over(game)) {
-        
+    
+    initialize_pipes(game->pipes);
+    initialize_bird(&game->bird);
 
+    while (!is_game_over(game)) {
+        draw_background();
+        draw_pipes(game->pipes);
+        draw_bird(game->bird);
+
+        // TODO: need implement scrolling and call that
+        // TODO: need to add clear screen for performance
+        // TODO: need code for bounce up
         next_frame();
     }
 }
