@@ -25,6 +25,10 @@
 #define GREY 0xC618
 #define PINK 0xFC18
 #define ORANGE 0xFC00
+#define SAND 0xFEF0
+#define SKY 0x96FF 
+#define LIGHT_GREEN 0xA6F0
+#define DARK_GREEN 0x0460
 // need add blank screen color
 #define BLACK 0x0
 
@@ -38,10 +42,19 @@
 #define PIPE_COLOR GREEN
 #define PIPE_WIDTH 15
 #define PIPE_VOID_HEIGHT 20
+#define BIRD_WIDTH 17
+#define BIRD_HEIGHT 12
 
 #define MODE_MENU 0
 #define MODE_GAME 1
 #define MODE_GAME_OVER 2
+
+/* Constants for background */
+#define GROUND_THICKNESS 20
+#define GRASS_THICKNESS 10
+#define SKY_THICKNESS 210
+#define GRASS_SQUARE_WIDTH 10
+#define NUM_GRASS_SQUARE 33
 
 /* Macro for absolute value */
 #define ABS(x) (((x) > 0) ? (x) : -(x))
@@ -111,10 +124,17 @@ int clamp(int x, int min, int max);
 void draw_pixel(int x, int y, color_t line_color);
 void draw_rect(int x0, int y0, int x1, int y1, color_t line_color);
 void draw_pipe(pipe_t pipe);
+void draw_bird(bird_t bird);
 void draw_game(game_state_t *game);
 void draw_game_over(game_state_t *game);
 void draw_menu(game_state_t *game);
+void draw_grass();
 void draw_background();
+
+// Control bird's position
+void do_bird_velocity();
+void do_bird_jump();
+void did_collide(bird_t bird, pipe_t pipe);
 
 // Game logic
 bool is_game_over(game_state_t *game);
@@ -244,6 +264,12 @@ void draw_pipe(pipe_t pipe) {
     draw_rect(x0, y_bottom_pipe_edge, x1, y_screen_bottom, PIPE_COLOR);
 }
 
+void draw_bird(bird_t bird){
+    //will use this to draw bird: https://www.pinterest.com/pin/559924166147577544/
+
+    draw_rect(bird.x, bird.y, bird.x + BIRD_WIDTH - 1, bird.y + BIRD_HEIGHT - 1, ORANGE);
+}
+
 void draw_game(game_state_t *game) {
     while (!is_game_over(game)) {
 
@@ -265,8 +291,39 @@ void draw_menu(game_state_t *game) {
     }
 }
 
-void draw_background() {
+void draw_grass(){
+    for(int i = 0; i < NUM_GRASS_SQUARE; i++){
+        int ith_grass_end_x = i * GRASS_SQUARE_WIDTH - 1;
+        int ith_grass_start_x = ith_grass_end_x - GRASS_SQUARE_WIDTH + 1;
+        if(i % 2 == 0){
+            draw_rect(ith_grass_start_x, RESOLUTION_Y - GRASS_THICKNESS - GROUND_THICKNESS, ith_grass_end_x, RESOLUTION_Y - GROUND_THICKNESS, LIGHT_GREEN);
+        }
+        else{
+            draw_rect(ith_grass_start_x, RESOLUTION_Y - GRASS_THICKNESS - GROUND_THICKNESS, ith_grass_end_x, RESOLUTION_Y - GROUND_THICKNESS, DARK_GREEN);
+        }
+    }
+}
 
+void draw_background() {
+    //draw ground
+    draw_rect(0, RESOLUTION_Y - GROUND_THICKNESS + 1, RESOLUTION_X, RESOLUTION_Y, SAND);
+    //draw grass
+    draw_grass();
+    //draw sky
+    draw_rect(0, 0, RESOLUTION_X, SKY_THICKNESS - 1, SKY);
+}
+
+// Control bird's position
+void do_bird_velocity(){
+
+}
+
+void do_bird_jump(){
+
+}
+
+void did_collide(bird_t bird, pipe_t pipe){
+    
 }
 
 // Game logic
