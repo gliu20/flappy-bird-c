@@ -229,17 +229,17 @@ void initialize_screen() {
 
 
 // Graphics
-int clamp(int x, int min, int max) {
-    if (x > max) return max;
-    if (x < min) return min;
+bool is_out_of_bounds(int x, int min, int max) {
+    if (x > max) return true;
+    if (x < min) return true;
 
-    return x;
+    return false;
 }
 
 void draw_pixel(int x, int y, color_t line_color) {
-    // Clamp safely ensures we dont go out of bounds of screen
-    x = clamp(x, 0, RESOLUTION_X - 1);
-    y = clamp(y, 0, RESOLUTION_Y - 1);
+    // Don't display offscreen pixels
+    if (is_out_of_bounds(x, 0, RESOLUTION_X - 1)) return;
+    if (is_out_of_bounds(y, 0, RESOLUTION_Y - 1)) return;
     
     // Actually plot pixel
     *(color_t *)(pixel_buffer_start + (y << 10) + (x << 1)) = line_color;
