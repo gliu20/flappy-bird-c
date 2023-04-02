@@ -65,6 +65,7 @@
 /* Background */
 #define GROUND_THICKNESS 20
 #define GRASS_THICKNESS 10
+#define TOTAL_FLOOR_HEIGHT (GROUND_THICKNESS + GRASS_THICKNESS)
 #define SKY_THICKNESS 210
 #define GRASS_SQUARE_WIDTH 10
 #define NUM_GRASS_SQUARE 33
@@ -191,7 +192,7 @@ void initialize_game(game_state_t *game) {
 
 void initialize_pipe(pipe_t *pipe, int i) {
     pipe->x = i * PIPE_SPACING;
-    pipe->y = rand() % (RESOLUTION_Y - PIPE_VOID_HEIGHT * 2) + PIPE_VOID_HEIGHT;
+    pipe->y = rand() % (RESOLUTION_Y - PIPE_VOID_HEIGHT * 2 - TOTAL_FLOOR_HEIGHT) + PIPE_VOID_HEIGHT;
     pipe->width = PIPE_WIDTH;
     pipe->void_height = PIPE_VOID_HEIGHT;
 }
@@ -269,7 +270,7 @@ void draw_pipe(pipe_t pipe) {
 
     // Bottom pipe
     int y_bottom_pipe_edge = pipe.y + (pipe.void_height / 2);
-    int y_screen_bottom = RESOLUTION_Y - 1;
+    int y_screen_bottom = RESOLUTION_Y - TOTAL_FLOOR_HEIGHT - 1;
 
     // Draw top pipe
     draw_rect(x0, y_screen_top, x1, y_top_pipe_edge, PIPE_COLOR);
@@ -340,15 +341,18 @@ void draw_menu(game_state_t *game) {
 }
 
 void draw_grass(){
-    for(int i = 0; i < NUM_GRASS_SQUARE; i++){
+    for (int i = 0; i < NUM_GRASS_SQUARE; i++){
         int ith_grass_end_x = i * GRASS_SQUARE_WIDTH - 1;
         int ith_grass_start_x = ith_grass_end_x - GRASS_SQUARE_WIDTH + 1;
-        if(i % 2 == 0){
-            draw_rect(ith_grass_start_x, RESOLUTION_Y - GRASS_THICKNESS - GROUND_THICKNESS, ith_grass_end_x, RESOLUTION_Y - GROUND_THICKNESS, LIGHT_GREEN);
-        }
-        else{
-            draw_rect(ith_grass_start_x, RESOLUTION_Y - GRASS_THICKNESS - GROUND_THICKNESS, ith_grass_end_x, RESOLUTION_Y - GROUND_THICKNESS, DARK_GREEN);
-        }
+        color_t grass_color = i % 2 == 0 ? LIGHT_GREEN : DARK_GREEN;
+
+        draw_rect(
+            ith_grass_start_x, 
+            RESOLUTION_Y - TOTAL_FLOOR_HEIGHT, 
+            ith_grass_end_x, 
+            RESOLUTION_Y - GROUND_THICKNESS, 
+            grass_color
+        );
     }
 }
 
