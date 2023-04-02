@@ -12,6 +12,7 @@
 #define TIMER_BASE            0xFF202000
 #define PIXEL_BUF_CTRL_BASE   0xFF203020
 #define CHAR_BUF_CTRL_BASE    0xFF203030
+#define PS2_BASE              0xFF200100
 
 
 /* VGA colors */
@@ -50,6 +51,9 @@
 #define BIRD_INITIAL_Y 100
 #define BIRD_INITIAL_VELOCITY -1
 #define BIRD_INITIAL_ANGLE 0
+#define BIRD_VELOCUTY_FACTOR_POS 0.8
+#define BIRD_VELOCUTY_FACTOR_NEG 1.2
+#define BIRD_JUMP_VELOCITY 2
 
 /* Modes */
 #define MODE_MENU 0
@@ -134,13 +138,13 @@ void draw_pipe(pipe_t pipe);
 void draw_bird(bird_t bird);
 void draw_game(game_state_t *game);
 void draw_game_over(game_state_t *game);
-void draw_menu(game_state_t *game, bird_t bird);
+void draw_menu(game_state_t *game);
 void draw_grass();
 void draw_background();
 
 // Control bird's position
-void do_bird_velocity();
-void do_bird_jump();
+void do_bird_velocity(bird_t* bird);
+void do_bird_jump(bird_t* bird);
 void did_collide(bird_t bird, pipe_t pipe);
 
 // Game logic
@@ -164,10 +168,10 @@ int main(void) {
         switch (game.mode) {
             case MODE_GAME: draw_game(&game); break;
             case MODE_GAME_OVER: draw_game_over(&game); break;
-            case MODE_MENU: draw_menu(&game, bird); break;
+            case MODE_MENU: draw_menu(&game); break;
 
             // By default, go to menu
-            default: draw_menu(&game, bird); break;
+            default: draw_menu(&game); break;
         }
     }
 }
@@ -281,6 +285,7 @@ void draw_bird(bird_t bird){
 
 void draw_game(game_state_t *game) {
     while (!is_game_over(game)) {
+        
 
         next_frame();
     }
@@ -303,10 +308,9 @@ void draw_game_over(game_state_t *game) {
     }
 }
 
-void draw_menu(game_state_t *game, bird_t bird) {
+void draw_menu(game_state_t *game) {
     while (game -> mode == MODE_MENU) {
         draw_background();
-        draw_bird(bird);
 
         //display "FLAPPY BIRD"
         //display "PRESS ENTER TO START"
@@ -342,12 +346,34 @@ void draw_background() {
 }
 
 // Control bird's position
-void do_bird_velocity(){
+void do_bird_velocity(bird_t* bird){
+    //update y position
+    (bird -> y) = (bird -> y) + (bird -> y_velocity);
 
+    //update y velocity
+    //to simulate gravity, subtract 20% of y_velocity as bird moves 
+    if((bird -> y_velocity) > 0){
+        (bird -> y_velocity) = BIRD_VELOCUTY_FACTOR_POS * (bird -> y_velocity);
+    }
+    else if((bird -> y_velocity) == 0){
+        (bird -> y_velocity) = BIRD_INITIAL_VELOCITY;
+    }
+    else{
+        (bird -> y_velocity) = BIRD_VELOCUTY_FACTOR_NEG * (bird -> y_velocity);
+    }
 }
 
-void do_bird_jump(){
-
+void do_bird_jump(bird_t* bird){
+    //bird will jump when the user pressed space key
+    volatile int * PS2_ptr = (int *)PS2_BASE;
+    int PS2_data = *(PS2_ptr); // read the Data register in the PS/2 port
+    int RVALID = PS2_data & 0x8000; // extract the RVALID field
+    if (RVALID) {
+        char key_data = PS2_data & 0xFF;
+        if (key_data == (char)0x29){
+            (bird -> y_velocity) = BIRD_JUMP_VELOCITY;
+        }
+    }
 }
 
 void did_collide(bird_t bird, pipe_t pipe){
