@@ -153,6 +153,7 @@ bool did_collide(bird_t bird, pipe_t pipe);
 
 // Game logic
 bool is_game_over(game_state_t *game);
+void change_mode(game_state_t *game);
 
 // Screen/VGA
 void next_frame();
@@ -315,9 +316,11 @@ void draw_game_over(game_state_t *game) {
         //display "GAME OVER"
         //display "SCORE: "
         //display "PRESS ENTER TO RESTART"
+        //display "PRESS BACK TO GO TO MENU"
         char text_for_game_state[] = "GAME OVER\0";
-        char text_for_score[] = "GAME OVER\0";
-        char text_to_display[] = "PRESS ENTER TO RESTART\0";
+        char text_for_score[] = "SCORE:\0 ";
+        char text_for_restart[] = "PRESS ENTER TO RESTART\0";
+        char text_for_menu[] = "PRESS BACK TO GO TO MENU\0";
 
         //use character buffer
 
@@ -425,11 +428,28 @@ bool did_collide(bird_t bird, pipe_t pipe){
     }
 }
 
+
 // Game logic
 bool is_game_over(game_state_t *game) {
     return false;
 }
 
+
+void change_mode(game_state_t *game){
+    volatile int * PS2_ptr = (int *)PS2_BASE;
+    int PS2_data = *(PS2_ptr); // read the Data register in the PS/2 port
+    int RVALID = PS2_data & 0x8000; // extract the RVALID field
+    if (RVALID) {
+        char key_data = PS2_data & 0xFF;
+        //Enter has pressed when the mode is menu
+        if(((game -> mode) == MODE_MENU || (game -> mode) == MODE_GAME_OVER) && key_data == (char)0x5A){
+            (game -> mode) = MODE_GAME;
+        }
+        else if ((game -> mode) == MODE_GAME_OVER && key_data == (char)0x66){
+            (game -> mode) = MODE_MENU;
+        }
+    }
+}
 
 // Screen/VGA
 void clear_screen() {
