@@ -82,6 +82,7 @@ volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
 
 // Global state
 typedef struct bird {
+    //(x, y) is the top left point of the bird
     int x;
     int y;
 
@@ -145,7 +146,7 @@ void draw_background();
 // Control bird's position
 void do_bird_velocity(bird_t* bird);
 void do_bird_jump(bird_t* bird);
-void did_collide(bird_t bird, pipe_t pipe);
+bool did_collide(bird_t bird, pipe_t pipe);
 
 // Game logic
 bool is_game_over(game_state_t *game);
@@ -376,8 +377,34 @@ void do_bird_jump(bird_t* bird){
     }
 }
 
-void did_collide(bird_t bird, pipe_t pipe){
-    
+/**
+ * return true when the bird and the pipe collide, return false when they don't collide
+*/
+bool did_collide(bird_t bird, pipe_t pipe){
+    //these four points form a rectangle of void space between top pipe and bottom pipe
+    //pipe_void_x1 < pipe_void_x2, pipe_void_y1 < pipe_void_y2
+    //@George please assign proper values to these four variables
+    int pipe_void_x1 = 0;
+    int pipe_void_x2 = 1;
+    int pipe_void_y1 = 0;
+    int pipe_void_y2 = 1;
+
+    //check whether the bird and the pipe collides
+    //the bird hasn't reached the pipe or the bird has already passed the pipe
+    if(bird.x + BIRD_WIDTH - 1 < pipe_void_x1 || bird.x > pipe_void_x2){
+        return false;
+    }
+    //some portion of the bird is in between the top and bottom pipe
+    else{
+        //y coordinate of the bird is within the void region
+        if(bird.y >= pipe_void_y1 && bird.y + BIRD_HEIGHT - 1 <= pipe_void_y2){
+            return false;
+        }
+        //the bird and the pipe collide
+        else{
+            return true;
+        }
+    }
 }
 
 // Game logic
