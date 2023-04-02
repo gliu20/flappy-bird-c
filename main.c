@@ -95,7 +95,7 @@ typedef struct bird {
 } bird_t;
 
 typedef struct pipe {
-    // Coordinates of the void for the pipe
+    // Coordinates of the centre of void for the pipe
     int x;
     int y;
 
@@ -381,13 +381,12 @@ void do_bird_jump(bird_t* bird){
  * return true when the bird and the pipe collide, return false when they don't collide
 */
 bool did_collide(bird_t bird, pipe_t pipe){
-    //these four points form a rectangle of void space between top pipe and bottom pipe
+    //these four lines form a rectangle of void space between top pipe and bottom pipe
     //pipe_void_x1 < pipe_void_x2, pipe_void_y1 < pipe_void_y2
-    //@George please assign proper values to these four variables
-    int pipe_void_x1 = 0;
-    int pipe_void_x2 = 1;
-    int pipe_void_y1 = 0;
-    int pipe_void_y2 = 1;
+    int pipe_void_x1 = pipe.x - (pipe.width / 2);
+    int pipe_void_x2 = pipe.x + (pipe.width / 2);
+    int pipe_void_y1 = pipe.y - (pipe.void_height / 2);
+    int pipe_void_y2 = pipe.y + (pipe.void_height / 2);
 
     //check whether the bird and the pipe collides
     //the bird hasn't reached the pipe or the bird has already passed the pipe
