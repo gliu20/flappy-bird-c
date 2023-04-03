@@ -340,6 +340,10 @@ void draw_game_over(game_state_t *game) {
         char text_for_restart[] = "PRESS ENTER TO RESTART\0";
         char text_for_menu[] = "PRESS BACK TO GO TO MENU\0";
 
+        char score[10];
+        itoa(game -> score, score, 10);
+        strcat(text_for_score,score);
+
         //use character buffer
         video_text(35, 12, text_for_game_state);
         video_text(36, 22, text_for_score);
@@ -358,7 +362,7 @@ void erase_game_over_texts(){
         //display "PRESS ENTER TO RESTART"
         //display "PRESS BACK TO GO TO MENU"
         char text_for_game_state[] = "         \0";
-        char text_for_score[] = "      \0 ";
+        char text_for_score[] = "                        \0 ";
         char text_for_restart[] = "                      \0";
         char text_for_menu[] = "                        \0";
 
