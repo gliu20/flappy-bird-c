@@ -146,6 +146,8 @@ void initialize_screen();
 // Helpers
 int clamp(int x, int min, int max);
 void video_text(int x, int y, char * text_ptr);
+void erase_menu_texts();
+void erase_game_over_texts();
 
 // Graphics
 void draw_pixel(int x, int y, color_t line_color);
@@ -350,6 +352,23 @@ void draw_game_over(game_state_t *game) {
     }
 }
 
+void erase_game_over_texts(){
+    //display "GAME OVER"
+        //display "SCORE: "
+        //display "PRESS ENTER TO RESTART"
+        //display "PRESS BACK TO GO TO MENU"
+        char text_for_game_state[] = "         \0";
+        char text_for_score[] = "      \0 ";
+        char text_for_restart[] = "                      \0";
+        char text_for_menu[] = "                        \0";
+
+        //use character buffer
+        video_text(35, 12, text_for_game_state);
+        video_text(36, 22, text_for_score);
+        video_text(29, 32, text_for_restart);
+        video_text(28, 42, text_for_menu);
+}
+
 void draw_menu(game_state_t *game, bird_t bird) {
     while (game -> mode == MODE_MENU) {
         draw_background(0);
@@ -368,6 +387,17 @@ void draw_menu(game_state_t *game, bird_t bird) {
         change_mode(game);
         next_frame();
     }
+}
+
+void erase_menu_texts(){
+    //erase "FLAPPY BIRD"
+    //erase "PRESS ENTER TO START"
+    char text_to_erase_game_name[] = "           \0";
+    char text_to_erase_display[] = "                    \0";
+
+    //use character buffer
+    video_text(44, 15, text_to_erase_game_name);
+    video_text(40, 44, text_to_erase_display);
 }
 
 void draw_grass(int x_offset){
@@ -487,7 +517,11 @@ void change_mode(game_state_t *game){
     if (RVALID) {
         char key_data = PS2_data & 0xFF;
         //Enter has pressed when the mode is menu
-        if(((game -> mode) == MODE_MENU || (game -> mode) == MODE_GAME_OVER) && key_data == (char)ENTER_KEY){
+        if((game -> mode) == MODE_MENU&& key_data == (char)ENTER_KEY){
+            erase_menu_texts();
+            (game -> mode) = MODE_GAME;
+        }
+        else if((game -> mode) == MODE_GAME_OVER && key_data == (char)ENTER_KEY){
             (game -> mode) = MODE_GAME;
         }
         else if ((game -> mode) == MODE_GAME_OVER && key_data == (char)BACK_KEY){
