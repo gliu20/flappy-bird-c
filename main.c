@@ -371,6 +371,16 @@ void draw_menu(game_state_t *game, bird_t bird) {
 }
 
 void draw_grass(int x_offset){
+
+    // Draw outline
+    draw_rect(
+        0, 
+        RESOLUTION_Y - TOTAL_FLOOR_HEIGHT - 1, 
+        RESOLUTION_X - 1, 
+        RESOLUTION_Y - GROUND_THICKNESS + 1, 
+        BLACK
+    );
+    
     for (int i = 0; i < NUM_GRASS_SQUARE; i++){
         int ith_grass_end_x = i * GRASS_SQUARE_WIDTH - 1;
         int ith_grass_start_x = ith_grass_end_x - GRASS_SQUARE_WIDTH + 1;
