@@ -201,6 +201,7 @@ void initialize_game(game_state_t *game) {
     // In practice, we want to change this to MODE_MENU
     game->mode = MODE_GAME;
     game->score = 0;
+    game->x_offset = 0;
 
     initialize_pipes(game->pipes);
     initialize_bird(&game->bird);
