@@ -349,6 +349,8 @@ void draw_game(game_state_t *game) {
         // TODO: need code for bounce up
         next_frame();
     }
+
+    game->mode = MODE_GAME_OVER;
 }
 
 void int_to_string (int n, char string[], int string_length) {
@@ -578,7 +580,7 @@ inline bool is_game_over(game_state_t *game) {
             return true;
     }
 
-    return bird_in_screen(bird);
+    return bird_in_screen(game->bird);
 }
 
 
