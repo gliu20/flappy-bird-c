@@ -437,11 +437,11 @@ void do_scroll_view(game_state_t *game) {
         pipe->x -= SCROLL_VIEW_AMOUNT;
     }
 
-    // 165 is a magic number that ensure scrolling
+    // 66 is a magic number that ensure scrolling
     // grass is periodic with respect to the screen
     // (theoretically)
     game->x_offset -= SCROLL_VIEW_AMOUNT;
-    game->x_offset = game->x_offset  % 165;
+    game->x_offset = game->x_offset % 66;
 }
 
 /**
