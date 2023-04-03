@@ -70,6 +70,11 @@
 #define GRASS_SQUARE_WIDTH 10
 #define NUM_GRASS_SQUARE 33
 
+/* Key data */
+#define SPACE_KEY 0x29
+#define ENTER_KEY 0x5A
+#define BACK_KEY 0x66
+
 /* Macro for absolute value */
 #define ABS(x) (((x) > 0) ? (x) : -(x))
 
@@ -407,7 +412,7 @@ void do_bird_jump(bird_t* bird){
     int RVALID = PS2_data & 0x8000; // extract the RVALID field
     if (RVALID) {
         char key_data = PS2_data & 0xFF;
-        if (key_data == (char)0x29){
+        if (key_data == (char)SPACE_KEY){
             (bird -> y_velocity) = BIRD_JUMP_VELOCITY;
         }
     }
@@ -456,10 +461,10 @@ void change_mode(game_state_t *game){
     if (RVALID) {
         char key_data = PS2_data & 0xFF;
         //Enter has pressed when the mode is menu
-        if(((game -> mode) == MODE_MENU || (game -> mode) == MODE_GAME_OVER) && key_data == (char)0x5A){
+        if(((game -> mode) == MODE_MENU || (game -> mode) == MODE_GAME_OVER) && key_data == (char)ENTER_KEY){
             (game -> mode) = MODE_GAME;
         }
-        else if ((game -> mode) == MODE_GAME_OVER && key_data == (char)0x66){
+        else if ((game -> mode) == MODE_GAME_OVER && key_data == (char)BACK_KEY){
             (game -> mode) = MODE_MENU;
         }
     }
