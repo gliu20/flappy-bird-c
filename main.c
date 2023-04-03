@@ -44,7 +44,7 @@
 
 /* Pipes */
 #define NUM_PIPES 5
-#define PIPE_COLOR GREEN
+#define PIPE_COLOR 0x06F0
 #define PIPE_WIDTH 30
 #define PIPE_VOID_HEIGHT 40
 #define PIPE_SPACING 90
