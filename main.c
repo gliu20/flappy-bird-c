@@ -40,13 +40,13 @@
 
 /* Flappy bird specific constants */
 
-#define SCROLL_VIEW_AMOUNT 4
+#define SCROLL_VIEW_AMOUNT 2
 
 /* Pipes */
 #define NUM_PIPES 5
 #define PIPE_COLOR GREEN
 #define PIPE_WIDTH 30
-#define PIPE_VOID_HEIGHT 40
+#define PIPE_VOID_HEIGHT 60
 #define PIPE_SPACING 90
 
 /* Birds */
