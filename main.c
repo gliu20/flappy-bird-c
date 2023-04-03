@@ -72,8 +72,8 @@
 #define SKY_THICKNESS (RESOLUTION_Y - TOTAL_FLOOR_HEIGHT)
 #define GRASS_SQUARE_WIDTH 10
 
-// This is calulated from (RESOLUTION_X + 165) / GRASS_SQUARE_WIDTH
-#define NUM_GRASS_SQUARE 49 
+// This is calulated from (RESOLUTION_X + 66) / GRASS_SQUARE_WIDTH
+#define NUM_GRASS_SQUARE 39 
 
 /* Key data */
 #define SPACE_KEY 0x29
