@@ -72,8 +72,8 @@
 #define SKY_THICKNESS (RESOLUTION_Y - TOTAL_FLOOR_HEIGHT)
 #define GRASS_SQUARE_WIDTH 10
 
-// This is calulated from (RESOLUTION_X + 66) / GRASS_SQUARE_WIDTH
-#define NUM_GRASS_SQUARE 39 
+// This is calulated from (RESOLUTION_X) / GRASS_SQUARE_WIDTH
+#define NUM_GRASS_SQUARE 34
 
 /* Key data */
 #define SPACE_KEY 0x29
@@ -120,17 +120,25 @@ typedef struct pipe {
     int void_height;
 } pipe_t;
 
+
+typedef struct grass {
+    // Unlike pipe, grass coordinates are not centered for
+    // ease of programming
+    int left_x;
+    int right_x;
+} grass_t;
+
 typedef short int color_t;
 
 
 typedef struct game_state {
+    grass_t grasses[NUM_GRASS_SQUARE];
     pipe_t pipes[NUM_PIPES];
     bird_t bird;
 
     // Can be any of the MODE_* in the #define
     int mode;
     int score;
-    int x_offset;
 } game_state_t;
 
 
@@ -140,7 +148,7 @@ void initialize_game(game_state_t *game);
 void initialize_pipe(pipe_t *pipe, int i);
 void initialize_pipes(pipe_t pipes[]);
 void initialize_bird(bird_t *bird);
-void initialize_screen();
+void initialize_screen(game_state_t *game);
 
 
 // Helpers
@@ -155,8 +163,8 @@ void draw_bird(bird_t bird);
 void draw_game(game_state_t *game);
 void draw_game_over(game_state_t *game);
 void draw_menu(game_state_t *game, bird_t bird);
-void draw_grass(int x_offset);
-void draw_background(int x_offset);
+void draw_grasses();
+void draw_background(game_state_t *game);
 
 // Control bird's position
 void do_bird_velocity(bird_t* bird);
@@ -175,21 +183,19 @@ void wait_for_vsync();
 
 int main(void) {
     game_state_t game;
-    bird_t bird;
 
     initialize_game(&game);
-    initialize_bird(&bird);
-    initialize_screen();
+    initialize_screen(&game);
 
     while (true) {
         clear_screen();
         switch (game.mode) {
             case MODE_GAME: draw_game(&game); break;
             case MODE_GAME_OVER: draw_game_over(&game); break;
-            case MODE_MENU: draw_menu(&game, bird); break;
+            case MODE_MENU: draw_menu(&game, game.bird); break;
 
             // By default, go to menu
-            default: draw_menu(&game, bird); break;
+            default: draw_menu(&game, game.bird); break;
         }
     }
 }
@@ -201,9 +207,9 @@ void initialize_game(game_state_t *game) {
     // In practice, we want to change this to MODE_MENU
     game->mode = MODE_GAME;
     game->score = 0;
-    game->x_offset = 0;
 
     initialize_pipes(game->pipes);
+    initialize_grasses(game->grasses);
     initialize_bird(&game->bird);
 }
 
@@ -212,6 +218,18 @@ void initialize_pipe(pipe_t *pipe, int i) {
     pipe->y = rand() % (RESOLUTION_Y - PIPE_VOID_HEIGHT * 2 - TOTAL_FLOOR_HEIGHT) + PIPE_VOID_HEIGHT;
     pipe->width = PIPE_WIDTH;
     pipe->void_height = PIPE_VOID_HEIGHT;
+}
+
+void initialize_grass(grass_t *grass, int i) {
+    // The +1 and -1 are for the grass outline
+    grass->right_x = i * GRASS_SQUARE_WIDTH - 1;  
+    grass->left_x = grass->right_x - GRASS_SQUARE_WIDTH + 1;
+}
+
+void initialize_grasses(grass_t grasses[]) {
+    for (int i = 0; i < NUM_GRASS_SQUARE; i++) {
+        initialize_grass(&grasses[i], i);
+    }
 }
 
 void initialize_pipes(pipe_t pipes[]) {
@@ -227,7 +245,7 @@ void initialize_bird(bird_t *bird) {
     bird->angle = BIRD_INITIAL_ANGLE;
 }
 
-void initialize_screen() {
+void initialize_screen(game_state_t *game) {
     /* set front pixel buffer to start of FPGA On-chip memory */
     *(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
                                         // back buffer
@@ -235,11 +253,11 @@ void initialize_screen() {
     wait_for_vsync(pixel_ctrl_ptr);
     /* initialize a boxer to the pixel buffer, used by drawing functions */
     pixel_buffer_start = *pixel_ctrl_ptr;
-    draw_background(0); // pixel_buffer_start boxs to the pixel buffer
+    draw_background(game); // pixel_buffer_start boxs to the pixel buffer
     /* set back pixel buffer to start of SDRAM memory */
     *(pixel_ctrl_ptr + 1) = 0xC0000000;
     pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-    draw_background(0); // pixel_buffer_start boxs to the pixel buffer
+    draw_background(game); // pixel_buffer_start boxs to the pixel buffer
 }
 
 
@@ -314,7 +332,7 @@ void draw_game(game_state_t *game) {
     initialize_bird(&game->bird);
 
     while (!is_game_over(game)) {
-        draw_background(game->x_offset);
+        draw_background(game);
         draw_pipes(game->pipes);
         draw_bird(game->bird);
 
@@ -327,7 +345,7 @@ void draw_game(game_state_t *game) {
 
 void draw_game_over(game_state_t *game) {
     while (game -> mode == MODE_GAME_OVER) {
-        draw_background(0);
+        draw_background(game);
 
         //display "GAME OVER"
         //display "SCORE: "
@@ -352,7 +370,7 @@ void draw_game_over(game_state_t *game) {
 
 void draw_menu(game_state_t *game, bird_t bird) {
     while (game -> mode == MODE_MENU) {
-        draw_background(0);
+        draw_background(game);
         draw_bird(bird);
 
         //display "FLAPPY BIRD"
@@ -370,37 +388,32 @@ void draw_menu(game_state_t *game, bird_t bird) {
     }
 }
 
-void draw_grass(int x_offset){
+void draw_grasses(grass_t grass[]){
+    int grass_top = RESOLUTION_Y - TOTAL_FLOOR_HEIGHT;
+    int grass_bottom = RESOLUTION_Y - GROUND_THICKNESS;
 
     // Draw outline
-    draw_rect(
-        0, 
-        RESOLUTION_Y - TOTAL_FLOOR_HEIGHT - 1, 
-        RESOLUTION_X - 1, 
-        RESOLUTION_Y - GROUND_THICKNESS + 1, 
-        BLACK
-    );
+    draw_rect(0, grass_top - 1, RESOLUTION_X - 1, grass_bottom + 1, BLACK);
     
+    // Draw grass blocks
     for (int i = 0; i < NUM_GRASS_SQUARE; i++){
-        int ith_grass_end_x = i * GRASS_SQUARE_WIDTH - 1;
-        int ith_grass_start_x = ith_grass_end_x - GRASS_SQUARE_WIDTH + 1;
         color_t grass_color = i % 2 == 0 ? LIGHT_GREEN : DARK_GREEN;
 
         draw_rect(
-            ith_grass_start_x + x_offset, 
-            RESOLUTION_Y - TOTAL_FLOOR_HEIGHT, 
-            ith_grass_end_x + x_offset, 
-            RESOLUTION_Y - GROUND_THICKNESS, 
+            grass[i].left_x, 
+            grass_top, 
+            grass[i].right_x, 
+            grass_bottom, 
             grass_color
         );
     }
 }
 
-void draw_background(int x_offset) {
+void draw_background(game_state_t *game) {
     //draw ground
     draw_rect(0, RESOLUTION_Y - GROUND_THICKNESS + 1, RESOLUTION_X, RESOLUTION_Y, SAND);
     //draw grass
-    draw_grass(x_offset);
+    draw_grasses(game->grasses);
     //draw sky
     draw_rect(0, 0, RESOLUTION_X, SKY_THICKNESS - 1, SKY);
 }
@@ -437,7 +450,9 @@ void do_bird_jump(bird_t* bird){
 }
 
 
-void do_scroll_view(game_state_t *game) {    
+void do_scroll_view(game_state_t *game) {   
+
+    // Scroll pipes 
     for (int i = 0; i < NUM_PIPES; i++) {
         pipe_t *pipe = &game->pipes[i];
 
@@ -447,11 +462,16 @@ void do_scroll_view(game_state_t *game) {
         pipe->x -= SCROLL_VIEW_AMOUNT;
     }
 
-    // 66 is a magic number that ensure scrolling
-    // grass is periodic with respect to the screen
-    // (theoretically)
-    game->x_offset -= SCROLL_VIEW_AMOUNT;
-    game->x_offset = game->x_offset % 66;
+    // Scroll grasses
+    for (int i = 0; i < NUM_GRASS_SQUARE; i++) {
+        grass_t *grass = &game->grasses[i];
+
+        if (grass->right_x < 0) 
+            initialize_grass(grass, NUM_GRASS_SQUARE);
+
+        grass->left_x -= SCROLL_VIEW_AMOUNT;
+        grass->right_x -= SCROLL_VIEW_AMOUNT;
+    }
 }
 
 /**
