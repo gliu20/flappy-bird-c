@@ -143,7 +143,7 @@ void draw_pipe(pipe_t pipe);
 void draw_bird(bird_t bird);
 void draw_game(game_state_t *game);
 void draw_game_over(game_state_t *game);
-void draw_menu(game_state_t *game);
+void draw_menu(game_state_t *game, bird_t bird);
 void draw_grass();
 void draw_background();
 
@@ -163,8 +163,10 @@ void wait_for_vsync();
 
 int main(void) {
     game_state_t game;
+    bird_t bird;
 
     initialize_game(&game);
+    initialize_bird(&bird);
     initialize_screen();
 
     while (true) {
@@ -172,10 +174,10 @@ int main(void) {
         switch (game.mode) {
             case MODE_GAME: draw_game(&game); break;
             case MODE_GAME_OVER: draw_game_over(&game); break;
-            case MODE_MENU: draw_menu(&game); break;
+            case MODE_MENU: draw_menu(&game, bird); break;
 
             // By default, go to menu
-            default: draw_menu(&game); break;
+            default: draw_menu(&game, bird); break;
         }
     }
 }
@@ -324,14 +326,21 @@ void draw_game_over(game_state_t *game) {
         char text_for_menu[] = "PRESS BACK TO GO TO MENU\0";
 
         //use character buffer
+        video_text(35, 12, text_for_game_state);
+        video_text(36, 22, text_for_score);
+        video_text(29, 32, text_for_restart);
+        video_text(28, 42, text_for_menu);
 
+        //check whether Enter or Back has pressed
+        change_mode(game);
         next_frame();
     }
 }
 
-void draw_menu(game_state_t *game) {
+void draw_menu(game_state_t *game, bird_t bird) {
     while (game -> mode == MODE_MENU) {
         draw_background();
+        draw_bird(bird);
 
         //display "FLAPPY BIRD"
         //display "PRESS ENTER TO START"
@@ -342,6 +351,8 @@ void draw_menu(game_state_t *game) {
         video_text(44, 15, text_for_game_name);
         video_text(40, 44, text_to_display);
 
+        //check whether Enter has pressed
+        change_mode(game);
         next_frame();
     }
 }
