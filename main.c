@@ -178,6 +178,7 @@ bool did_collide(bird_t bird, pipe_t pipe);
 
 // Game logic
 bool is_game_over(game_state_t *game);
+bool bird_in_screen(bird_t bird);
 void change_mode(game_state_t *game);
 void do_scroll_view(game_state_t *game);
 
@@ -342,6 +343,8 @@ void draw_game(game_state_t *game) {
         draw_bird(game->bird);
 
         do_scroll_view(game);
+        do_bird_velocity(&game->bird);
+
         // TODO: need to add clear screen for performance
         // TODO: need code for bounce up
         next_frame();
@@ -350,7 +353,6 @@ void draw_game(game_state_t *game) {
 
 void int_to_string (int n, char string[], int string_length) {
     int i = string_length - 1;
-    char temp = "\0";
 
     // Ensures null-terminate string
     string[i--] = "\0";
@@ -565,9 +567,18 @@ bool did_collide(bird_t bird, pipe_t pipe){
 }
 
 
+inline bool bird_in_screen(bird_t bird) {
+    return is_out_of_bounds(bird.y, 0, RESOLUTION_Y - TOTAL_FLOOR_HEIGHT);
+}
+
 // Game logic
 inline bool is_game_over(game_state_t *game) {
-    return false;
+    for (int i = 0; i < NUM_PIPES; i++) {
+        if (did_collide(game->bird, game->pipes[i]))
+            return true;
+    }
+
+    return bird_in_screen(bird);
 }
 
 
