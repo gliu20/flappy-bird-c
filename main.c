@@ -239,14 +239,14 @@ void initialize_screen() {
 
 
 // Graphics
-bool is_out_of_bounds(int x, int min, int max) {
+inline bool is_out_of_bounds(int x, int min, int max) {
     if (x > max) return true;
     if (x < min) return true;
 
     return false;
 }
 
-void draw_pixel(int x, int y, color_t line_color) {
+inline void draw_pixel(int x, int y, color_t line_color) {
     // Don't display offscreen pixels
     if (is_out_of_bounds(x, 0, RESOLUTION_X - 1)) return;
     if (is_out_of_bounds(y, 0, RESOLUTION_Y - 1)) return;
