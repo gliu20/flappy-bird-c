@@ -39,6 +39,9 @@
 #define RESOLUTION_Y 240
 
 /* Flappy bird specific constants */
+
+#define SCROLL_VIEW_AMOUNT 5
+
 /* Pipes */
 #define NUM_PIPES 5
 #define PIPE_COLOR GREEN
@@ -310,7 +313,7 @@ void draw_game(game_state_t *game) {
         draw_pipes(game->pipes);
         draw_bird(game->bird);
 
-        // TODO: need implement scrolling and call that
+        do_scroll_view(game);
         // TODO: need to add clear screen for performance
         // TODO: need code for bounce up
         next_frame();
@@ -415,6 +418,18 @@ void do_bird_jump(bird_t* bird){
         if (key_data == (char)SPACE_KEY){
             (bird -> y_velocity) = BIRD_JUMP_VELOCITY;
         }
+    }
+}
+
+
+void do_scroll_view(game_state_t *game) {    
+    for (int i = 0; i < NUM_PIPES; i++) {
+        pipe_t *pipe = &game->pipes[i];
+
+        // Index NUM_PIPES is to rename this pipe to be the last pipe
+        // at end of screen
+        if (pipe->x < 0) initialize_pipe(pipe, NUM_PIPES);
+        pipe->x -= SCROLL_VIEW_AMOUNT;
     }
 }
 
