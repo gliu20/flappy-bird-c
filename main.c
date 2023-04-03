@@ -479,6 +479,7 @@ void do_bird_jump(bird_t* bird){
     if (RVALID) {
         char key_data = PS2_data & 0xFF;
         if (key_data == (char)SPACE_KEY){
+            *(PS2_ptr) = 0xF4;
             (bird -> y_velocity) = BIRD_JUMP_VELOCITY;
         }
     }
@@ -554,12 +555,17 @@ void change_mode(game_state_t *game){
         //Enter has pressed when the mode is menu
         if((game -> mode) == MODE_MENU&& key_data == (char)ENTER_KEY){
             erase_menu_texts();
+            *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_GAME;
         }
         else if((game -> mode) == MODE_GAME_OVER && key_data == (char)ENTER_KEY){
+            erase_game_over_texts();
+            *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_GAME;
         }
         else if ((game -> mode) == MODE_GAME_OVER && key_data == (char)BACK_KEY){
+            erase_game_over_texts();
+            *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_MENU;
         }
     }
