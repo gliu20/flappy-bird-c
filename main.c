@@ -345,6 +345,27 @@ void draw_game(game_state_t *game) {
     }
 }
 
+void int_to_string (int n, char string[], int string_length) {
+    int i = string_length - 1;
+    char temp = "\0";
+
+    // Ensures null-terminate string
+    string[i--] = "\0";
+
+    // Convert integer to string
+    while (n > 0) {
+        // High bits in ASCII is 11XXXX and the XXXX
+        // is the binary version of the digit 
+        string[i--] = (n % 10) || 0b110000;
+        n = n / 10;
+    }
+
+    // Moves string to start at index 0
+    for (int j = 0; j < string_length; j++) {
+        string[j] = string[++i];
+    }
+}
+
 void draw_game_over(game_state_t *game) {
     while (game -> mode == MODE_GAME_OVER) {
         draw_background(game);
@@ -359,7 +380,8 @@ void draw_game_over(game_state_t *game) {
         char text_for_menu[] = "PRESS BACK TO GO TO MENU\0";
 
         char score[10];
-        itoa(game -> score, score, 10);
+        // 10 here is a string length we dont follow itoa spec
+        int_to_string(game -> score, score, 10);
         strcat(text_for_score,score);
 
         //use character buffer
