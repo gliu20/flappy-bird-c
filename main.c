@@ -368,7 +368,7 @@ void int_to_string (int n, char string[], int string_length) {
     }
 
     // Moves string to start at index 0
-    for (int j = 0; j < string_length; j++) {
+    for (int j = 0; j < string_length && i < string_length - 1; j++) {
         string[j] = string[++i];
     }
 }
@@ -386,10 +386,10 @@ void draw_game_over(game_state_t *game) {
         char text_for_restart[] = "PRESS ENTER TO RESTART\0";
         char text_for_menu[] = "PRESS BACK TO GO TO MENU\0";
 
-        char score[10];
+       // char score[10];
         // 10 here is a string length we dont follow itoa spec
-        int_to_string(game -> score, score, 10);
-        strcat(text_for_score,score);
+       // int_to_string(game -> score, score, 10);
+       // strcat(text_for_score,score);
 
         //use character buffer
         video_text(35, 12, text_for_game_state);
