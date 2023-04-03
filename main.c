@@ -97,7 +97,10 @@ volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
 typedef struct bird {
     //(x, y) is the top left point of the bird
     int x;
-    int y;
+
+    // This needs to be a double so if we have a 0.1 velocity
+    // for example we don't round down
+    double y; 
 
     // y_velocity is a double so we can
     // make gravity not jumpy
