@@ -72,8 +72,8 @@
 #define SKY_THICKNESS (RESOLUTION_Y - TOTAL_FLOOR_HEIGHT)
 #define GRASS_SQUARE_WIDTH 10
 
-// This is calulated from (RESOLUTION_X + 165) / GRASS_SQUARE_WIDTH
-#define NUM_GRASS_SQUARE 49 
+// This is calulated from (RESOLUTION_X + 66) / GRASS_SQUARE_WIDTH
+#define NUM_GRASS_SQUARE 39 
 
 /* Key data */
 #define SPACE_KEY 0x29
@@ -401,6 +401,16 @@ void erase_menu_texts(){
 }
 
 void draw_grass(int x_offset){
+
+    // Draw outline
+    draw_rect(
+        0, 
+        RESOLUTION_Y - TOTAL_FLOOR_HEIGHT - 1, 
+        RESOLUTION_X - 1, 
+        RESOLUTION_Y - GROUND_THICKNESS + 1, 
+        BLACK
+    );
+    
     for (int i = 0; i < NUM_GRASS_SQUARE; i++){
         int ith_grass_end_x = i * GRASS_SQUARE_WIDTH - 1;
         int ith_grass_start_x = ith_grass_end_x - GRASS_SQUARE_WIDTH + 1;
