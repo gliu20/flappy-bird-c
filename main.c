@@ -230,11 +230,11 @@ void initialize_screen() {
     wait_for_vsync(pixel_ctrl_ptr);
     /* initialize a boxer to the pixel buffer, used by drawing functions */
     pixel_buffer_start = *pixel_ctrl_ptr;
-    clear_screen(); // pixel_buffer_start boxs to the pixel buffer
+    draw_background(); // pixel_buffer_start boxs to the pixel buffer
     /* set back pixel buffer to start of SDRAM memory */
     *(pixel_ctrl_ptr + 1) = 0xC0000000;
     pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
-    clear_screen(); // pixel_buffer_start boxs to the pixel buffer
+    draw_background(); // pixel_buffer_start boxs to the pixel buffer
 }
 
 
