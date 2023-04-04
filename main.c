@@ -171,7 +171,7 @@ void draw_bird(bird_t bird);
 void draw_game(game_state_t *game);
 void draw_game_over(game_state_t *game);
 void draw_menu(game_state_t *game, bird_t bird);
-void draw_grasses();
+void draw_grasses(grass_t grass[]);
 void draw_background(game_state_t *game);
 
 // Control bird's position
@@ -296,7 +296,7 @@ inline void draw_pixel(int x, int y, color_t line_color) {
  * @param y1 - bottom right corner
  * @param line_color - color
 */
-void draw_rect(int x0, int y0, int x1, int y1, color_t line_color) {
+inline void draw_rect(int x0, int y0, int x1, int y1, color_t line_color) {
     for (int x = x0; x < x1; x++) {
         for (int y = y0; y < y1; y++) {
             draw_pixel(x, y, line_color);
@@ -550,7 +550,7 @@ void do_scroll_view(game_state_t *game) {
 
         // Index NUM_PIPES is to rename this pipe to be the last pipe
         // at end of screen
-        if (pipe->x < 0) initialize_pipe(pipe, NUM_PIPES);
+        if (pipe->x < -PIPE_WIDTH / 2) initialize_pipe(pipe, NUM_PIPES);
         pipe->x -= SCROLL_VIEW_AMOUNT;
     }
 
