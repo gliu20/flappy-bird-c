@@ -153,6 +153,7 @@ void initialize_pipe(pipe_t *pipe, int i);
 void initialize_pipes(pipe_t pipes[]);
 void initialize_bird(bird_t *bird);
 void initialize_screen(game_state_t *game);
+void initialize_grasses(grass_t grasses[]);
 
 
 // Helpers
@@ -383,7 +384,7 @@ void int_to_string (int n, char string[], int string_length) {
     int i = string_length - 1;
 
     // Ensures null-terminate string
-    string[i--] = "\0";
+    string[i--] = '\0';
 
     // Convert integer to string
     while (n > 0) {
