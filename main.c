@@ -405,19 +405,19 @@ void draw_game_over(game_state_t *game) {
 
 void erase_game_over_texts(){
     //display "GAME OVER"
-        //display "SCORE: "
-        //display "PRESS ENTER TO RESTART"
-        //display "PRESS BACK TO GO TO MENU"
-        char text_for_game_state[] = "         \0";
-        char text_for_score[] = "                        \0 ";
-        char text_for_restart[] = "                      \0";
-        char text_for_menu[] = "                        \0";
+    //display "SCORE: "
+    //display "PRESS ENTER TO RESTART"
+    //display "PRESS BACK TO GO TO MENU"
+    char text_for_game_state[] = "         \0";
+    char text_for_score[] = "                        \0 ";
+    char text_for_restart[] = "                      \0";
+    char text_for_menu[] = "                        \0";
 
-        //use character buffer
-        video_text(35, 12, text_for_game_state);
-        video_text(36, 22, text_for_score);
-        video_text(29, 32, text_for_restart);
-        video_text(28, 42, text_for_menu);
+    //use character buffer
+    video_text(35, 12, text_for_game_state);
+    video_text(36, 22, text_for_score);
+    video_text(29, 32, text_for_restart);
+    video_text(28, 42, text_for_menu);
 }
 
 void draw_menu(game_state_t *game, bird_t bird) {
