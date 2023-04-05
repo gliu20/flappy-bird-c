@@ -857,16 +857,28 @@ void change_mode(game_state_t *game){
             erase_menu_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_GAME;
+            (game->score) = 0;
+            initialize_pipes(game->pipes);
+            initialize_grasses(game->grasses);
+            initialize_bird(&game->bird);
         }
         else if((game -> mode) == MODE_GAME_OVER && key_data == (char)ENTER_KEY){
             erase_game_over_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_GAME;
+            (game->score) = 0;
+            initialize_pipes(game->pipes);
+            initialize_grasses(game->grasses);
+            initialize_bird(&game->bird);
         }
         else if ((game -> mode) == MODE_GAME_OVER && key_data == (char)BACK_KEY){
             erase_game_over_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_MENU;
+            (game->score) = 0;
+            initialize_pipes(game->pipes);
+            initialize_grasses(game->grasses);
+            initialize_bird(&game->bird);
         }
     }
 }
