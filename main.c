@@ -355,9 +355,8 @@ void initialize_pipe(pipe_t *pipe, int i) {
 }
 
 void initialize_grass(grass_t *grass, int i) {
-    // The +1 and -1 are for the grass outline
-    grass->right_x = i * GRASS_SQUARE_WIDTH - 1;  
-    grass->left_x = grass->right_x - GRASS_SQUARE_WIDTH + 1;
+    grass->right_x = i * GRASS_SQUARE_WIDTH;  
+    grass->left_x = grass->right_x - GRASS_SQUARE_WIDTH;
 }
 
 void initialize_grasses(grass_t grasses[]) {
@@ -717,8 +716,16 @@ void draw_grasses(grass_t grass[]){
         );
     }
 
-    // Draw outline
-    draw_rect_outline(-1, grass_top - 1, RESOLUTION_X, grass_bottom + 1, BLACK);
+    // Draw grass block outlines    
+    for (int i = 0; i < NUM_GRASS_SQUARE; i++){
+        draw_rect_outline(
+            grass[i].left_x, 
+            grass_top - 1, 
+            grass[i].right_x, 
+            grass_bottom + 1, 
+            BLACK
+        );
+    }
 }
 
 void draw_background(game_state_t *game) {
