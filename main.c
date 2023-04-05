@@ -609,26 +609,6 @@ void draw_game(game_state_t *game) {
     game->mode = MODE_GAME_OVER;
 }
 
-void int_to_string (int n, char string[], int string_length) {
-    int i = string_length - 1;
-
-    // Ensures null-terminate string
-    string[i--] = '\0';
-
-    // Convert integer to string
-    while (n > 0) {
-        // High bits in ASCII is 11XXXX and the XXXX
-        // is the binary version of the digit 
-        string[i--] = (n % 10) || 0b110000;
-        n = n / 10;
-    }
-
-    // Moves string to start at index 0
-    for (int j = 0; j < string_length && i < string_length - 1; j++) {
-        string[j] = string[++i];
-    }
-}
-
 void draw_game_over(game_state_t *game) {
     while (game -> mode == MODE_GAME_OVER) {
         draw_background(game);
