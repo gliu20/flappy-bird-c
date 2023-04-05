@@ -791,15 +791,31 @@ void do_scroll_view(game_state_t *game) {
     }
 
     // Scroll grasses
+    grass_t *prev_grass = &game->grasses[NUM_GRASS_SQUARE - 1];
+    grass_t *curr_grass;
+
+
+    // Wrap around grasses
+    for (int i = 0; i < NUM_GRASS_SQUARE; i++) {
+        curr_grass = &game->grasses[i];
+
+        if (curr_grass->right_x < 0) {
+            // Place grass square to the right of the rightmost square
+            curr_grass->left_x = prev_grass->right_x;
+            curr_grass->right_x = prev_grass->right_x + GRASS_SQUARE_WIDTH;  
+        }
+
+        prev_grass = curr_grass;
+    }
+
+    // Move all grasses
     for (int i = 0; i < NUM_GRASS_SQUARE; i++) {
         grass_t *grass = &game->grasses[i];
-
-        if (grass->right_x < 0) 
-            initialize_grass(grass, NUM_GRASS_SQUARE);
 
         grass->left_x -= SCROLL_VIEW_AMOUNT;
         grass->right_x -= SCROLL_VIEW_AMOUNT;
     }
+        
 }
 
 void do_update_score(game_state_t *game) {
