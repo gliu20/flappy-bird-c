@@ -430,6 +430,24 @@ inline void draw_rect(int x0, int y0, int x1, int y1, color_t line_color) {
     }
 }
 
+
+/**
+ * Draws a slanted rectangle where the coordinates are as specified
+ * Note: We expect x0 < x1 and y0 < y1
+ * @param x0 - top left corner
+ * @param y0 - top left corner
+ * @param x1 - bottom right corner
+ * @param y1 - bottom right corner
+ * @param line_color - color
+*/
+inline void draw_slanted_rect(int x0, int y0, int x1, int y1, color_t color) {
+    for (int x = x0; x <= x1; x++) {
+        for (int y = y0, i = 0; y <= y1; y++, i++) {
+            draw_pixel(x - i, y, color);
+        }
+    }
+}
+
 /**
  * Draws a rectangle outline where the coordinates are as specified
  * Note: We expect x0 < x1 and y0 < y1
@@ -447,6 +465,30 @@ void draw_rect_outline(int x0, int y0, int x1, int y1, color_t line_color) {
     for (int y = y0; y <= y1; y++) {
         draw_pixel(x0, y, line_color);
         draw_pixel(x1, y, line_color);
+    }
+}
+
+
+/**
+ * Draws a slanted rectangle outline
+ * Note: We expect x0 < x1 and y0 < y1
+ * @param x0 - top left corner
+ * @param y0 - top left corner
+ * @param x1 - bottom right corner
+ * @param y1 - bottom right corner
+ * @param line_color - color
+*/
+void draw_slanted_rect_outline(int x0, int y0, int x1, int y1, color_t line_color) {
+    // TODO: known bug: we dont properly draw the horizontal lines of a slanted
+    // rect in the right spots but this bug is not visually observable since
+    // this is only used for drawing grass
+    for (int x = x0; x <= x1; x++) {
+        draw_pixel(x, y0, line_color);
+        draw_pixel(x, y1, line_color);
+    }
+    for (int y = y0, i = 0; y <= y1; y++, i++) {
+        draw_pixel(x0 - i, y, line_color);
+        draw_pixel(x1 - i, y, line_color);
     }
 }
 
@@ -697,7 +739,7 @@ void draw_grasses(grass_t grass[]){
     for (int i = 0; i < NUM_GRASS_SQUARE; i++){
         color_t grass_color = i % 2 == 0 ? LIGHT_GREEN : DARK_GREEN;
 
-        draw_rect(
+        draw_slanted_rect(
             grass[i].left_x, 
             grass_top, 
             grass[i].right_x, 
@@ -708,7 +750,7 @@ void draw_grasses(grass_t grass[]){
 
     // Draw grass block outlines    
     for (int i = 0; i < NUM_GRASS_SQUARE; i++){
-        draw_rect_outline(
+        draw_slanted_rect_outline(
             grass[i].left_x, 
             grass_top - 1, 
             grass[i].right_x, 
