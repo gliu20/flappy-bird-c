@@ -57,7 +57,7 @@
 // We wait this many frames before we update
 // the score as a hack to make sure we update the score
 // at the same time as when a player passes a pipe
-#define SCORE_UPDATE_TIME_OFFSET 0
+#define SCORE_UPDATE_TIME_OFFSET 10
 
 /* Pipes */
 #define NUM_PIPES 5
@@ -422,8 +422,8 @@ inline void draw_pixel(int x, int y, color_t line_color) {
  * @param line_color - color
 */
 inline void draw_rect(int x0, int y0, int x1, int y1, color_t line_color) {
-    for (int x = x0; x < x1; x++) {
-        for (int y = y0; y < y1; y++) {
+    for (int x = x0; x <= x1; x++) {
+        for (int y = y0; y <= y1; y++) {
             draw_pixel(x, y, line_color);
         }
     }
@@ -462,12 +462,12 @@ void draw_pipe(pipe_t pipe) {
     int y_screen_bottom = RESOLUTION_Y - TOTAL_FLOOR_HEIGHT - 1;
 
     // Draw top pipe, outline, pipe head outline
-    draw_rect(x0, y_screen_top, x1 + 1, y_top_pipe_edge, PIPE_COLOR);
-    draw_rect_outline(x0, y_screen_top-1, x1, y_top_pipe_edge - PIPE_HEAD_HEIGHT, BLACK);
+    draw_rect(x0, y_screen_top, x1, y_top_pipe_edge, PIPE_COLOR);
+    draw_rect_outline(x0, y_screen_top - 1, x1, y_top_pipe_edge - PIPE_HEAD_HEIGHT, BLACK);
     draw_rect_outline(x0 - 1, y_top_pipe_edge - PIPE_HEAD_HEIGHT, x1 + 1, y_top_pipe_edge, BLACK);
 
     // Draw bottom pipe
-    draw_rect(x0, y_bottom_pipe_edge, x1 + 1, y_screen_bottom, PIPE_COLOR);
+    draw_rect(x0, y_bottom_pipe_edge, x1, y_screen_bottom, PIPE_COLOR);
     draw_rect_outline(x0, y_bottom_pipe_edge + PIPE_HEAD_HEIGHT, x1, y_screen_bottom, BLACK);
     draw_rect_outline(x0 - 1, y_bottom_pipe_edge, x1 + 1, y_bottom_pipe_edge + PIPE_HEAD_HEIGHT, BLACK);
 }
@@ -703,8 +703,6 @@ void draw_grasses(grass_t grass[]){
     int grass_top = RESOLUTION_Y - TOTAL_FLOOR_HEIGHT;
     int grass_bottom = RESOLUTION_Y - GROUND_THICKNESS;
 
-    // Draw outline
-    draw_rect(0, grass_top - 1, RESOLUTION_X - 1, grass_bottom + 1, BLACK);
     
     // Draw grass blocks
     for (int i = 0; i < NUM_GRASS_SQUARE; i++){
@@ -718,15 +716,18 @@ void draw_grasses(grass_t grass[]){
             grass_color
         );
     }
+
+    // Draw outline
+    draw_rect_outline(-1, grass_top - 1, RESOLUTION_X, grass_bottom + 1, BLACK);
 }
 
 void draw_background(game_state_t *game) {
+    //draw sky
+    draw_rect(0, 0, RESOLUTION_X, SKY_THICKNESS - 1, SKY);
     //draw ground
     draw_rect(0, RESOLUTION_Y - GROUND_THICKNESS + 1, RESOLUTION_X, RESOLUTION_Y, SAND);
     //draw grass
     draw_grasses(game->grasses);
-    //draw sky
-    draw_rect(0, 0, RESOLUTION_X, SKY_THICKNESS - 1, SKY);
 }
 
 // Control bird's position
