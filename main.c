@@ -366,7 +366,7 @@ void draw_bird(bird_t bird){
     draw_rect(bird.x + 6, bird.y + 4, bird.x + 9, bird.y + 5, YELLOW);
     draw_rect(bird.x + 16, bird.y + 4, bird.x + 17, bird.y + 9, BLACK);
     draw_rect(bird.x + 22, bird.y + 4, bird.x + 23, bird.y + 5, WHITE);
-    draw_rect(bird.x + 24, bird.y + 4, bird.x + 25, bird.y + 5, WHITE); //12
+    draw_rect(bird.x + 24, bird.y + 4, bird.x + 25, bird.y + 5, BLACK); //12
     draw_rect(bird.x + 2, bird.y + 6, bird.x + 7, bird.y + 7, BLACK);
     draw_rect(bird.x + 8, bird.y + 6, bird.x + 9, bird.y + 7, YELLOW);
     draw_rect(bird.x + 18, bird.y + 10, bird.x + 19, bird.y + 11, BLACK);
@@ -393,7 +393,7 @@ void draw_bird(bird_t bird){
     draw_rect(bird.x + 8, bird.y + 16, bird.x + 15, bird.y + 19, SAND);
     draw_rect(bird.x + 16, bird.y + 16, bird.x + 17, bird.y + 17, BLACK);
     draw_rect(bird.x + 18, bird.y + 16, bird.x + 19, bird.y + 17, ORANGE);
-    draw_rect(bird.x + 20, bird.y + 16, bird.x + 31, bird.y + 17, BLACK); //39
+    draw_rect(bird.x + 20, bird.y + 16, bird.x + 29, bird.y + 17, BLACK); //39
     draw_rect(bird.x + 6, bird.y + 18, bird.x + 7, bird.y + 19, BLACK);
     draw_rect(bird.x + 16, bird.y + 18, bird.x + 17, bird.y + 19, SAND);
     draw_rect(bird.x + 18, bird.y + 18, bird.x + 19, bird.y + 19, BLACK);
