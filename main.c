@@ -50,7 +50,7 @@
 #define PIPE_SPACING 90
 
 /* Birds */
-#define BIRD_WIDTH 34
+#define BIRD_WIDTH 32
 #define BIRD_HEIGHT 24
 #define BIRD_INITIAL_X 20
 #define BIRD_INITIAL_Y 100
@@ -327,9 +327,55 @@ void draw_pipes(pipe_t pipes[]) {
 }
 
 void draw_bird(bird_t bird){
-    //will use this * 2 (in terms of the size) to draw bird: https://www.pinterest.com/pin/559924166147577544/
-
-    draw_rect(bird.x, bird.y, bird.x + BIRD_WIDTH - 1, bird.y + BIRD_HEIGHT - 1, ORANGE);
+    //modified based on this to draw bird: https://www.pinterest.com/pin/559924166147577544/
+    draw_rect(bird.x, bird.y + 8, bird.x + 1, bird.y + 15, BLACK);
+    draw_rect(bird.x + 10, bird.y, bird.x + 21, bird.y + 1, BLACK);
+    draw_rect(bird.x + 6, bird.y + 2, bird.x + 9, bird.y + 3, BLACK);
+    draw_rect(bird.x + 16, bird.y + 2, bird.x + 17, bird.y + 3, YELLOW);
+    draw_rect(bird.x + 18, bird.y + 2, bird.x + 19, bird.y + 3, BLACK);
+    draw_rect(bird.x + 20, bird.y + 2, bird.x + 21, bird.y + 3, WHITE);
+    draw_rect(bird.x + 22, bird.y + 2, bird.x + 23, bird.y + 3, BLACK); //7
+    draw_rect(bird.x + 4, bird.y + 4, bird.x + 5, bird.y + 5, BLACK);
+    draw_rect(bird.x + 6, bird.y + 4, bird.x + 9, bird.y + 5, YELLOW);
+    draw_rect(bird.x + 16, bird.y + 4, bird.x + 17, bird.y + 9, BLACK);
+    draw_rect(bird.x + 22, bird.y + 4, bird.x + 23, bird.y + 5, WHITE);
+    draw_rect(bird.x + 24, bird.y + 4, bird.x + 25, bird.y + 5, WHITE); //12
+    draw_rect(bird.x + 2, bird.y + 6, bird.x + 7, bird.y + 7, BLACK);
+    draw_rect(bird.x + 8, bird.y + 6, bird.x + 9, bird.y + 7, YELLOW);
+    draw_rect(bird.x + 18, bird.y + 10, bird.x + 19, bird.y + 11, BLACK);
+    draw_rect(bird.x + 18, bird.y + 4, bird.x + 21, bird.y + 9, WHITE); 
+    draw_rect(bird.x + 22, bird.y + 6, bird.x + 23, bird.y + 9, BLACK);
+    draw_rect(bird.x + 24, bird.y + 6, bird.x + 25, bird.y + 11, WHITE); 
+    draw_rect(bird.x + 26, bird.y + 6, bird.x + 27, bird.y + 11, BLACK); //19
+    draw_rect(bird.x + 2, bird.y + 8, bird.x + 7, bird.y + 13, WHITE);
+    draw_rect(bird.x + 8, bird.y + 8, bird.x + 9, bird.y + 9, BLACK);
+    draw_rect(bird.x + 10, bird.y + 2, bird.x + 15, bird.y + 9, YELLOW);
+    draw_rect(bird.x + 20, bird.y + 10, bird.x + 23, bird.y + 11, WHITE); //23
+    draw_rect(bird.x + 8, bird.y + 10, bird.x + 9, bird.y + 13, YELLOW);
+    draw_rect(bird.x + 10, bird.y + 10, bird.x + 11, bird.y + 13, BLACK);
+    draw_rect(bird.x + 12, bird.y + 10, bird.x + 17, bird.y + 15, YELLOW); //26
+    draw_rect(bird.x + 18, bird.y + 12, bird.x + 19, bird.y + 13, YELLOW);
+    draw_rect(bird.x + 20, bird.y + 12, bird.x + 29, bird.y + 13, BLACK); //28
+    draw_rect(bird.x + 2, bird.y + 14, bird.x + 7, bird.y + 15, YELLOW);
+    draw_rect(bird.x + 8, bird.y + 14, bird.x + 9, bird.y + 15, BLACK);
+    draw_rect(bird.x + 10, bird.y + 14, bird.x + 11, bird.y + 15, YELLOW);
+    draw_rect(bird.x + 18, bird.y + 14, bird.x + 19, bird.y + 15, BLACK);
+    draw_rect(bird.x + 20, bird.y + 14, bird.x + 29, bird.y + 15, ORANGE);
+    draw_rect(bird.x + 30, bird.y + 14, bird.x + 31, bird.y + 15, BLACK); //34
+    draw_rect(bird.x + 2, bird.y + 16, bird.x + 7, bird.y + 17, BLACK);
+    draw_rect(bird.x + 8, bird.y + 16, bird.x + 15, bird.y + 19, SAND);
+    draw_rect(bird.x + 16, bird.y + 16, bird.x + 17, bird.y + 17, BLACK);
+    draw_rect(bird.x + 18, bird.y + 16, bird.x + 19, bird.y + 17, ORANGE);
+    draw_rect(bird.x + 20, bird.y + 16, bird.x + 31, bird.y + 17, BLACK); //39
+    draw_rect(bird.x + 6, bird.y + 18, bird.x + 7, bird.y + 19, BLACK);
+    draw_rect(bird.x + 16, bird.y + 18, bird.x + 17, bird.y + 19, SAND);
+    draw_rect(bird.x + 18, bird.y + 18, bird.x + 19, bird.y + 19, BLACK);
+    draw_rect(bird.x + 20, bird.y + 18, bird.x + 27, bird.y + 19, ORANGE);
+    draw_rect(bird.x + 28, bird.y + 18, bird.x + 29, bird.y + 19, BLACK); //44
+    draw_rect(bird.x + 8, bird.y + 20, bird.x + 11, bird.y + 21, BLACK);
+    draw_rect(bird.x + 12, bird.y + 20, bird.x + 19, bird.y + 21, SAND);
+    draw_rect(bird.x + 20, bird.y + 20, bird.x + 29, bird.y + 21, BLACK);
+    draw_rect(bird.x + 12, bird.y + 22, bird.x + 19, bird.y + 23, BLACK); //48
 }
 
 void draw_game(game_state_t *game) {
