@@ -567,6 +567,14 @@ void draw_integer(int n, int x, int y, color_t color) {
     }
 }
 
+/**
+ * Draws the score at x, y where x, y specifies the 
+ * top-right corner of the text to be drawn. This means text
+ * will appear to the left of x, y
+ * @param score
+ * @param x
+ * @param y
+*/
 void draw_score(int score, int x, int y) {
     // Cheat to get outline on score
     draw_integer(score, x + 1, y + 1, BLACK);
