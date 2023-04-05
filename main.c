@@ -109,7 +109,7 @@
 
 
 volatile int pixel_buffer_start;
-volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
+volatile int *pixel_ctrl_ptr = (int *) 0xFF203020;
 
 // Custom font for digits of image
 int digits_image[NUM_DIGITS][SCORE_CHAR_HEIGHT][SCORE_CHAR_WIDTH] = {
@@ -298,6 +298,7 @@ void draw_game_over(game_state_t *game);
 void draw_menu(game_state_t *game, bird_t bird);
 void draw_grasses(grass_t grass[]);
 void draw_background(game_state_t *game);
+bool is_out_of_bounds(int x, int min, int max);
 
 // Control bird's position
 void do_bird_velocity(bird_t* bird);
@@ -309,6 +310,7 @@ bool is_game_over(game_state_t *game);
 bool bird_in_screen(bird_t bird);
 void change_mode(game_state_t *game);
 void do_scroll_view(game_state_t *game);
+void do_update_score(game_state_t *game);
 
 // Screen/VGA
 void next_frame();
@@ -383,7 +385,7 @@ void initialize_screen(game_state_t *game) {
     *(pixel_ctrl_ptr + 1) = 0xC8000000; // first store the address in the 
                                         // back buffer
     /* now, swap the front/back buffers, to set the front buffer location */
-    wait_for_vsync(pixel_ctrl_ptr);
+    wait_for_vsync();
     /* initialize a boxer to the pixel buffer, used by drawing functions */
     pixel_buffer_start = *pixel_ctrl_ptr;
     draw_background(game); // pixel_buffer_start boxs to the pixel buffer
@@ -402,13 +404,13 @@ inline bool is_out_of_bounds(int x, int min, int max) {
     return false;
 }
 
-inline void draw_pixel(int x, int y, color_t line_color) {
+inline void draw_pixel(int x, int y, color_t color) {
     // Don't display offscreen pixels
     if (is_out_of_bounds(x, 0, RESOLUTION_X - 1)) return;
     if (is_out_of_bounds(y, 0, RESOLUTION_Y - 1)) return;
     
     // Actually plot pixel
-    *(color_t *)(pixel_buffer_start + (y << 10) + (x << 1)) = line_color;
+    *(color_t *)(pixel_buffer_start + (y << 10) + (x << 1)) = color;
 }
 
 /**
@@ -918,7 +920,7 @@ void clear_screen() {
 
 void next_frame() {
     // Swap front and back buffers on vsync and update buffer pointer
-    wait_for_vsync(pixel_ctrl_ptr);
+    wait_for_vsync();
     pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 }
 
