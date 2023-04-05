@@ -46,6 +46,7 @@
 #define NUM_PIPES 5
 #define PIPE_COLOR 0x06F0
 #define PIPE_WIDTH 30
+#define PIPE_HEAD_HEIGHT 15
 #define PIPE_VOID_HEIGHT 60
 #define PIPE_SPACING 90
 
@@ -152,6 +153,7 @@ void initialize_pipe(pipe_t *pipe, int i);
 void initialize_pipes(pipe_t pipes[]);
 void initialize_bird(bird_t *bird);
 void initialize_screen(game_state_t *game);
+void initialize_grasses(grass_t grasses[]);
 
 
 // Helpers
@@ -163,12 +165,13 @@ void erase_game_over_texts();
 // Graphics
 void draw_pixel(int x, int y, color_t line_color);
 void draw_rect(int x0, int y0, int x1, int y1, color_t line_color);
+void draw_rect_outline(int x0, int y0, int x1, int y1, color_t line_color);
 void draw_pipe(pipe_t pipe);
 void draw_bird(bird_t bird);
 void draw_game(game_state_t *game);
 void draw_game_over(game_state_t *game);
 void draw_menu(game_state_t *game, bird_t bird);
-void draw_grasses();
+void draw_grasses(grass_t grass[]);
 void draw_background(game_state_t *game);
 
 // Control bird's position
@@ -293,11 +296,31 @@ inline void draw_pixel(int x, int y, color_t line_color) {
  * @param y1 - bottom right corner
  * @param line_color - color
 */
-void draw_rect(int x0, int y0, int x1, int y1, color_t line_color) {
+inline void draw_rect(int x0, int y0, int x1, int y1, color_t line_color) {
     for (int x = x0; x < x1; x++) {
         for (int y = y0; y < y1; y++) {
             draw_pixel(x, y, line_color);
         }
+    }
+}
+
+/**
+ * Draws a rectangle outline where the coordinates are as specified
+ * Note: We expect x0 < x1 and y0 < y1
+ * @param x0 - top left corner
+ * @param y0 - top left corner
+ * @param x1 - bottom right corner
+ * @param y1 - bottom right corner
+ * @param line_color - color
+*/
+void draw_rect_outline(int x0, int y0, int x1, int y1, color_t line_color) {
+    for (int x = x0; x <= x1; x++) {
+        draw_pixel(x, y0, line_color);
+        draw_pixel(x, y1, line_color);
+    }
+    for (int y = y0; y <= y1; y++) {
+        draw_pixel(x0, y, line_color);
+        draw_pixel(x1, y, line_color);
     }
 }
 
@@ -313,11 +336,15 @@ void draw_pipe(pipe_t pipe) {
     int y_bottom_pipe_edge = pipe.y + (pipe.void_height / 2);
     int y_screen_bottom = RESOLUTION_Y - TOTAL_FLOOR_HEIGHT - 1;
 
-    // Draw top pipe
-    draw_rect(x0, y_screen_top, x1, y_top_pipe_edge, PIPE_COLOR);
+    // Draw top pipe, outline, pipe head outline
+    draw_rect(x0, y_screen_top, x1 + 1, y_top_pipe_edge, PIPE_COLOR);
+    draw_rect_outline(x0, y_screen_top-1, x1, y_top_pipe_edge - PIPE_HEAD_HEIGHT, BLACK);
+    draw_rect_outline(x0 - 1, y_top_pipe_edge - PIPE_HEAD_HEIGHT, x1 + 1, y_top_pipe_edge, BLACK);
 
     // Draw bottom pipe
-    draw_rect(x0, y_bottom_pipe_edge, x1, y_screen_bottom, PIPE_COLOR);
+    draw_rect(x0, y_bottom_pipe_edge, x1 + 1, y_screen_bottom, PIPE_COLOR);
+    draw_rect_outline(x0, y_bottom_pipe_edge + PIPE_HEAD_HEIGHT, x1, y_screen_bottom, BLACK);
+    draw_rect_outline(x0 - 1, y_bottom_pipe_edge, x1 + 1, y_bottom_pipe_edge + PIPE_HEAD_HEIGHT, BLACK);
 }
 
 void draw_pipes(pipe_t pipes[]) {
@@ -403,7 +430,7 @@ void int_to_string (int n, char string[], int string_length) {
     int i = string_length - 1;
 
     // Ensures null-terminate string
-    string[i--] = "\0";
+    string[i--] = '\0';
 
     // Convert integer to string
     while (n > 0) {
@@ -451,19 +478,19 @@ void draw_game_over(game_state_t *game) {
 
 void erase_game_over_texts(){
     //display "GAME OVER"
-        //display "SCORE: "
-        //display "PRESS ENTER TO RESTART"
-        //display "PRESS BACK TO GO TO MENU"
-        char text_for_game_state[] = "         \0";
-        char text_for_score[] = "                        \0 ";
-        char text_for_restart[] = "                      \0";
-        char text_for_menu[] = "                        \0";
+    //display "SCORE: "
+    //display "PRESS ENTER TO RESTART"
+    //display "PRESS BACK TO GO TO MENU"
+    char text_for_game_state[] = "         \0";
+    char text_for_score[] = "                        \0 ";
+    char text_for_restart[] = "                      \0";
+    char text_for_menu[] = "                        \0";
 
-        //use character buffer
-        video_text(35, 12, text_for_game_state);
-        video_text(36, 22, text_for_score);
-        video_text(29, 32, text_for_restart);
-        video_text(28, 42, text_for_menu);
+    //use character buffer
+    video_text(35, 12, text_for_game_state);
+    video_text(36, 22, text_for_score);
+    video_text(29, 32, text_for_restart);
+    video_text(28, 42, text_for_menu);
 }
 
 void draw_menu(game_state_t *game, bird_t bird) {
@@ -569,7 +596,7 @@ void do_scroll_view(game_state_t *game) {
 
         // Index NUM_PIPES is to rename this pipe to be the last pipe
         // at end of screen
-        if (pipe->x < 0) initialize_pipe(pipe, NUM_PIPES);
+        if (pipe->x < -PIPE_WIDTH / 2) initialize_pipe(pipe, NUM_PIPES);
         pipe->x -= SCROLL_VIEW_AMOUNT;
     }
 
