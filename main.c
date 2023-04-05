@@ -39,8 +39,25 @@
 #define RESOLUTION_Y 240
 
 /* Flappy bird specific constants */
-
 #define SCROLL_VIEW_AMOUNT 2
+
+/* Score */
+#define NUM_DIGITS 10
+
+// Dimensions of the character font
+#define SCORE_CHAR_WIDTH 4
+#define SCORE_CHAR_HEIGHT 6
+
+// Scaling; For example if 2, then font is drawn at twice
+// its normal size
+#define SCORE_CHAR_SCALE 2
+#define SCORE_POS_X (RESOLUTION_X - 30)
+#define SCORE_POS_Y 10
+
+// We wait this many frames before we update
+// the score as a hack to make sure we update the score
+// at the same time as when a player passes a pipe
+#define SCORE_UPDATE_TIME_OFFSET 0
 
 /* Pipes */
 #define NUM_PIPES 5
@@ -94,6 +111,111 @@
 volatile int pixel_buffer_start;
 volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
 
+// Custom font for digits of image
+int digits_image[NUM_DIGITS][SCORE_CHAR_HEIGHT][SCORE_CHAR_WIDTH] = {
+
+    // Zero
+    {
+        { 0, 0, 0, 0 },
+        { 1, 1, 1, 0 },
+        { 1, 0, 1, 0 },
+        { 1, 0, 1, 0 },
+        { 1, 0, 1, 0 },
+        { 1, 1, 1, 0 },
+    },
+
+    // One
+    {
+        { 0, 0, 0, 0 },
+        { 0, 0, 1, 0 },
+        { 0, 1, 1, 0 },
+        { 0, 0, 1, 0 },
+        { 0, 0, 1, 0 },
+        { 0, 0, 1, 0 },
+    },
+
+    // Two
+    {
+        { 0, 0, 0, 0 },
+        { 1, 1, 1, 0 },
+        { 0, 0, 1, 0 },
+        { 1, 1, 1, 0 },
+        { 1, 0, 0, 0 },
+        { 1, 1, 1, 0 },
+    },
+
+    // Three
+    {
+        { 0, 0, 0, 0 },
+        { 1, 1, 1, 0 },
+        { 0, 0, 1, 0 },
+        { 1, 1, 1, 0 },
+        { 0, 0, 1, 0 },
+        { 1, 1, 1, 0 },
+    },
+
+    // Four
+    {
+        { 0, 0, 0, 0 },
+        { 1, 0, 1, 0 },
+        { 1, 0, 1, 0 },
+        { 1, 1, 1, 0 },
+        { 0, 0, 1, 0 },
+        { 0, 0, 1, 0 },
+    },
+
+    // Five
+    {
+        { 0, 0, 0, 0 },
+        { 1, 1, 1, 0 },
+        { 1, 0, 0, 0 },
+        { 1, 1, 1, 0 },
+        { 0, 0, 1, 0 },
+        { 1, 1, 1, 0 },
+    },
+
+    // Six
+    {
+        { 0, 0, 0, 0 },
+        { 0, 1, 1, 0 },
+        { 1, 0, 0, 0 },
+        { 1, 1, 1, 0 },
+        { 1, 0, 1, 0 },
+        { 1, 1, 1, 0 },
+    },
+
+    // Seven
+    {
+        { 0, 0, 0, 0 },
+        { 1, 1, 1, 0 },
+        { 0, 0, 1, 0 },
+        { 0, 1, 0, 0 },
+        { 0, 1, 0, 0 },
+        { 0, 1, 0, 0 },
+    },
+
+    // Eight
+    {
+        { 0, 0, 0, 0 },
+        { 1, 1, 1, 0 },
+        { 1, 0, 1, 0 },
+        { 1, 1, 1, 0 },
+        { 1, 0, 1, 0 },
+        { 1, 1, 1, 0 },
+    },
+
+    // Nine
+    {
+        { 0, 0, 0, 0 },
+        { 1, 1, 1, 0 },
+        { 1, 0, 1, 0 },
+        { 1, 1, 1, 0 },
+        { 0, 0, 1, 0 },
+        { 0, 0, 1, 0 },
+    }
+};
+
+
 // Global state
 typedef struct bird {
     //(x, y) is the top left point of the bird
@@ -143,6 +265,9 @@ typedef struct game_state {
     // Can be any of the MODE_* in the #define
     int mode;
     int score;
+
+    // Used to keep track of when we passed a pipe
+    int time_since_seen_pipe;
 } game_state_t;
 
 
@@ -405,6 +530,53 @@ void draw_bird(bird_t bird){
     draw_rect(bird.x + 12, bird.y + 22, bird.x + 19, bird.y + 23, BLACK); //48
 }
 
+void draw_digit(int digit, int x_offset, int x, int y, color_t color) {
+    for (int i = 0; i < SCORE_CHAR_WIDTH; i++) {
+        for (int j = 0; j < SCORE_CHAR_HEIGHT; j++) {
+            int x_start = x + (i + x_offset) * SCORE_CHAR_SCALE;
+            int y_start = y + j * SCORE_CHAR_SCALE;
+            int x_end = x_start + SCORE_CHAR_SCALE;
+            int y_end = y_start + SCORE_CHAR_SCALE;
+
+            if (digits_image[digit][j][i])
+                draw_rect(x_start, y_start, x_end, y_end, color);
+        }
+    }
+}
+
+void draw_integer(int n, int x, int y, color_t color) {
+    int x_offset = 0;
+    int digit_count = 0;
+
+    if (n == 0) return draw_digit(n, x_offset, x, y, color);
+
+    while (n > 0) {
+        int digit = n % 10;
+
+        draw_digit(digit, x_offset, x, y, color);
+
+        // Move to the left to render next digit. We have to move left
+        // since we get digits in reverse order so we display digits
+        // from right to left
+        x_offset -= SCORE_CHAR_WIDTH;
+
+        // Move on to next digit
+        n = n / 10;
+        digit_count++;
+    }
+}
+
+void draw_score(int score, int x, int y) {
+    // Cheat to get outline on score
+    draw_integer(score, x + 1, y + 1, BLACK);
+    draw_integer(score, x - 1, y - 1, BLACK);
+    draw_integer(score, x + 1, y - 1, BLACK);
+    draw_integer(score, x - 1, y + 1, BLACK);
+
+    // Draw score
+    draw_integer(score, x, y, WHITE);
+}
+
 void draw_game(game_state_t *game) {
     
     initialize_pipes(game->pipes);
@@ -414,9 +586,11 @@ void draw_game(game_state_t *game) {
         draw_background(game);
         draw_pipes(game->pipes);
         draw_bird(game->bird);
+        draw_score(game->score, SCORE_POS_X, SCORE_POS_Y);
 
         do_scroll_view(game);
         do_bird_velocity(&game->bird);
+        do_update_score(game);
 
         // TODO: need to add clear screen for performance
         // TODO: need code for bounce up
@@ -596,7 +770,15 @@ void do_scroll_view(game_state_t *game) {
 
         // Index NUM_PIPES is to rename this pipe to be the last pipe
         // at end of screen
-        if (pipe->x < -PIPE_WIDTH / 2) initialize_pipe(pipe, NUM_PIPES);
+        if (pipe->x < -PIPE_WIDTH / 2) {
+            initialize_pipe(pipe, NUM_PIPES);
+
+            // Before resetting when we've last seen a pipe, we must
+            // request a score update so in case it's been overdue
+            // we don't accidentally miss out on updating the score
+            do_update_score(game);
+            game->time_since_seen_pipe = 0;
+        }
         pipe->x -= SCROLL_VIEW_AMOUNT;
     }
 
@@ -609,6 +791,13 @@ void do_scroll_view(game_state_t *game) {
 
         grass->left_x -= SCROLL_VIEW_AMOUNT;
         grass->right_x -= SCROLL_VIEW_AMOUNT;
+    }
+}
+
+void do_update_score(game_state_t *game) {
+    if (game->time_since_seen_pipe++ > SCORE_UPDATE_TIME_OFFSET) {
+        game->score++;
+        game->time_since_seen_pipe = 0;
     }
 }
 
