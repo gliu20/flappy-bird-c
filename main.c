@@ -96,7 +96,8 @@
 /* Key data */
 #define SPACE_KEY 0x29
 #define ENTER_KEY 0x5A
-#define BACK_KEY 0x66
+#define BACK_SPACE_KEY 0x66
+#define BREAK_CODE_PREFIX 0xF0
 
 /* Macro for absolute value */
 #define ABS(x) (((x) > 0) ? (x) : -(x))
@@ -662,7 +663,7 @@ void draw_game_over(game_state_t *game) {
         char text_for_game_state[] = "GAME OVER\0";
         char text_for_score[] = "SCORE:\0 ";
         char text_for_restart[] = "PRESS ENTER TO RESTART\0";
-        char text_for_menu[] = "PRESS BACK TO GO TO MENU\0";
+        char text_for_menu[] = "PRESS BACKSPACE TO GO TO MENU\0";
 
        // char score[10];
         // 10 here is a string length we dont follow itoa spec
@@ -689,7 +690,7 @@ void erase_game_over_texts(){
     char text_for_game_state[] = "         \0";
     char text_for_score[] = "                        \0 ";
     char text_for_restart[] = "                      \0";
-    char text_for_menu[] = "                        \0";
+    char text_for_menu[] = "                             \0";
 
     //use character buffer
     video_text(35, 12, text_for_game_state);
@@ -906,10 +907,15 @@ void change_mode(game_state_t *game){
     volatile int * PS2_ptr = (int *)PS2_BASE;
     int PS2_data = *(PS2_ptr); // read the Data register in the PS/2 port
     int RVALID = PS2_data & 0x8000; // extract the RVALID field
-    if (RVALID) {
-        char key_data = PS2_data & 0xFF;
+    char key_data_1 = 0;
+    char key_data_2 = 0;
+    char key_data_3 = 0;
+    while (RVALID) {
+        key_data_1 = key_data_2;
+        key_data_2 = key_data_3;
+        key_data_3 = PS2_data & 0xFF;
         //Enter has pressed when the mode is menu
-        if((game -> mode) == MODE_MENU&& key_data == (char)ENTER_KEY){
+        if((game -> mode) == MODE_MENU && key_data_3 == (char)ENTER_KEY && key_data_2 != (char)BREAK_CODE_PREFIX){
             erase_menu_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_GAME;
@@ -918,7 +924,7 @@ void change_mode(game_state_t *game){
             initialize_grasses(game->grasses);
             initialize_bird(&game->bird);
         }
-        else if((game -> mode) == MODE_GAME_OVER && key_data == (char)ENTER_KEY){
+        else if((game -> mode) == MODE_GAME_OVER && key_data_3 == (char)ENTER_KEY && key_data_2 != (char)BREAK_CODE_PREFIX){
             erase_game_over_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_GAME;
@@ -927,7 +933,7 @@ void change_mode(game_state_t *game){
             initialize_grasses(game->grasses);
             initialize_bird(&game->bird);
         }
-        else if ((game -> mode) == MODE_GAME_OVER && key_data == (char)BACK_KEY){
+        else if ((game -> mode) == MODE_GAME_OVER && key_data_3 == (char)BACK_SPACE_KEY && key_data_2 != (char)BREAK_CODE_PREFIX){
             erase_game_over_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_MENU;
@@ -936,6 +942,8 @@ void change_mode(game_state_t *game){
             initialize_grasses(game->grasses);
             initialize_bird(&game->bird);
         }
+		PS2_data = *(PS2_ptr); // read the Data register in the PS/2 port
+		RVALID = PS2_data & 0x8000; // extract the RVALID field
     }
 }
 
