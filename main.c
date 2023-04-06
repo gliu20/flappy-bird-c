@@ -287,6 +287,7 @@ int clamp(int x, int min, int max);
 void video_text(int x, int y, char * text_ptr);
 void erase_menu_texts();
 void erase_game_over_texts();
+void clearReadFIFO();
 
 // Graphics
 void draw_pixel(int x, int y, color_t line_color);
@@ -630,7 +631,7 @@ void draw_score(int score, int x, int y) {
 }
 
 void draw_game(game_state_t *game) {
-    
+    clearReadFIFO();
     initialize_pipes(game->pipes);
     initialize_bird(&game->bird);
 
@@ -653,6 +654,7 @@ void draw_game(game_state_t *game) {
 }
 
 void draw_game_over(game_state_t *game) {
+    clearReadFIFO();
     while (game -> mode == MODE_GAME_OVER) {
         draw_background(game);
 
@@ -700,6 +702,7 @@ void erase_game_over_texts(){
 }
 
 void draw_menu(game_state_t *game, bird_t bird) {
+    clearReadFIFO();
     while (game -> mode == MODE_MENU) {
         draw_background(game);
         draw_bird(bird);
@@ -907,15 +910,10 @@ void change_mode(game_state_t *game){
     volatile int * PS2_ptr = (int *)PS2_BASE;
     int PS2_data = *(PS2_ptr); // read the Data register in the PS/2 port
     int RVALID = PS2_data & 0x8000; // extract the RVALID field
-    char key_data_1 = 0;
-    char key_data_2 = 0;
-    char key_data_3 = 0;
-    while (RVALID) {
-        key_data_1 = key_data_2;
-        key_data_2 = key_data_3;
-        key_data_3 = PS2_data & 0xFF;
+    if (RVALID) {
+        char key_data = PS2_data & 0xFF;
         //Enter has pressed when the mode is menu
-        if((game -> mode) == MODE_MENU && key_data_3 == (char)ENTER_KEY && key_data_2 != (char)BREAK_CODE_PREFIX){
+        if((game -> mode) == MODE_MENU && key_data == (char)ENTER_KEY){
             erase_menu_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_GAME;
@@ -924,7 +922,7 @@ void change_mode(game_state_t *game){
             initialize_grasses(game->grasses);
             initialize_bird(&game->bird);
         }
-        else if((game -> mode) == MODE_GAME_OVER && key_data_3 == (char)ENTER_KEY && key_data_2 != (char)BREAK_CODE_PREFIX){
+        else if((game -> mode) == MODE_GAME_OVER && key_data == (char)ENTER_KEY){
             erase_game_over_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_GAME;
@@ -933,7 +931,7 @@ void change_mode(game_state_t *game){
             initialize_grasses(game->grasses);
             initialize_bird(&game->bird);
         }
-        else if ((game -> mode) == MODE_GAME_OVER && key_data_3 == (char)BACK_SPACE_KEY && key_data_2 != (char)BREAK_CODE_PREFIX){
+        else if ((game -> mode) == MODE_GAME_OVER && key_data == (char)BACK_SPACE_KEY){
             erase_game_over_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_MENU;
@@ -942,8 +940,6 @@ void change_mode(game_state_t *game){
             initialize_grasses(game->grasses);
             initialize_bird(&game->bird);
         }
-		PS2_data = *(PS2_ptr); // read the Data register in the PS/2 port
-		RVALID = PS2_data & 0x8000; // extract the RVALID field
     }
 }
 
@@ -988,3 +984,15 @@ void video_text(int x, int y, char * text_ptr) {
     }
 }
 
+void clearReadFIFO(){
+    volatile int * PS2_ptr = (int *)PS2_BASE;
+    *(PS2_ptr) = 0xF5; //disable keyboard input
+    //clear read FIFO
+    int PS2_data = *(PS2_ptr); // read the Data register in the PS/2 port
+    int RVALID = PS2_data & 0x8000; // extract the RVALID field
+    while (RVALID) {
+        PS2_data = *(PS2_ptr); // read the Data register in the PS/2 port
+        RVALID = PS2_data & 0x8000; // extract the RVALID field
+    }
+    *(PS2_ptr) = 0xF4; //enable keyboard input
+}
