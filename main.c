@@ -784,16 +784,7 @@ void do_bird_velocity(bird_t* bird){
     (bird -> y) = (bird -> y) + (bird -> y_velocity);
 
     //update y velocity
-    //to simulate gravity, subtract 20% of y_velocity as bird moves 
-    if((bird -> y_velocity) > 0){
-        (bird -> y_velocity) = BIRD_VELOCUTY_FACTOR_POS * (bird -> y_velocity);
-    }
-    else if((bird -> y_velocity) == 0){
-        (bird -> y_velocity) = BIRD_INITIAL_VELOCITY;
-    }
-    else{
-        (bird -> y_velocity) = BIRD_VELOCUTY_FACTOR_NEG * (bird -> y_velocity);
-    }
+    (bird -> y_velocity) += 0.01;
 }
 
 void do_bird_jump(bird_t* bird){
@@ -804,8 +795,8 @@ void do_bird_jump(bird_t* bird){
     if (RVALID) {
         char key_data = PS2_data & 0xFF;
         if (key_data == (char)SPACE_KEY){
-            (bird -> y) -= BIRD_JUMP_Y;
-            (bird -> y_velocity) = BIRD_JUMP_VELOCITY;
+            (bird -> y) -= 7;
+            (bird -> y_velocity) -= 0.1;
         }
     }
 }
