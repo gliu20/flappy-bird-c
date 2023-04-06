@@ -76,7 +76,8 @@
 #define BIRD_INITIAL_ANGLE 0
 #define BIRD_VELOCUTY_FACTOR_POS 1.2
 #define BIRD_VELOCUTY_FACTOR_NEG 0.8
-#define BIRD_JUMP_VELOCITY 2
+#define BIRD_JUMP_VELOCITY -2
+#define BIRD_JUMP_Y 5
 
 /* Modes */
 #define MODE_MENU 0
@@ -97,7 +98,6 @@
 #define SPACE_KEY 0x29
 #define ENTER_KEY 0x5A
 #define BACK_SPACE_KEY 0x66
-#define BREAK_CODE_PREFIX 0xF0
 
 /* Macro for absolute value */
 #define ABS(x) (((x) > 0) ? (x) : -(x))
@@ -287,7 +287,7 @@ int clamp(int x, int min, int max);
 void video_text(int x, int y, char * text_ptr);
 void erase_menu_texts();
 void erase_game_over_texts();
-void clearReadFIFO();
+void clear_read_FIFO();
 
 // Graphics
 void draw_pixel(int x, int y, color_t line_color);
@@ -343,7 +343,7 @@ int main(void) {
 void initialize_game(game_state_t *game) {
     // TODO @debug for testing we start at MODE_GAME
     // In practice, we want to change this to MODE_MENU
-    game->mode = MODE_GAME;
+    game->mode = MODE_MENU;
     game->score = 0;
 
     initialize_pipes(game->pipes);
@@ -631,7 +631,7 @@ void draw_score(int score, int x, int y) {
 }
 
 void draw_game(game_state_t *game) {
-    clearReadFIFO();
+    clear_read_FIFO();
     initialize_pipes(game->pipes);
     initialize_bird(&game->bird);
 
@@ -642,6 +642,7 @@ void draw_game(game_state_t *game) {
         draw_score(game->score, SCORE_POS_X, SCORE_POS_Y);
 
         do_scroll_view(game);
+        do_bird_jump(&game->bird);
         do_bird_velocity(&game->bird);
         do_update_score(game);
 
@@ -654,7 +655,7 @@ void draw_game(game_state_t *game) {
 }
 
 void draw_game_over(game_state_t *game) {
-    clearReadFIFO();
+    clear_read_FIFO();
     while (game -> mode == MODE_GAME_OVER) {
         draw_background(game);
 
@@ -676,7 +677,7 @@ void draw_game_over(game_state_t *game) {
         video_text(35, 12, text_for_game_state);
         video_text(36, 22, text_for_score);
         video_text(29, 32, text_for_restart);
-        video_text(28, 42, text_for_menu);
+        video_text(26, 42, text_for_menu);
 
         //check whether Enter or Back has pressed
         change_mode(game);
@@ -698,11 +699,11 @@ void erase_game_over_texts(){
     video_text(35, 12, text_for_game_state);
     video_text(36, 22, text_for_score);
     video_text(29, 32, text_for_restart);
-    video_text(28, 42, text_for_menu);
+    video_text(26, 42, text_for_menu);
 }
 
 void draw_menu(game_state_t *game, bird_t bird) {
-    clearReadFIFO();
+    clear_read_FIFO();
     while (game -> mode == MODE_MENU) {
         draw_background(game);
         draw_bird(bird);
@@ -710,10 +711,12 @@ void draw_menu(game_state_t *game, bird_t bird) {
         //display "FLAPPY BIRD"
         //display "PRESS ENTER TO START"
         char text_for_game_name[] = "FLAPPY BIRD\0";
+        char text_for_instruction[] = "PRESS SPACE TO LET THE BIRD JUMP\0";
         char text_to_display[] = "PRESS ENTER TO START\0";
 
         //use character buffer
         video_text(44, 15, text_for_game_name);
+        video_text(34, 30, text_for_instruction);
         video_text(40, 44, text_to_display);
 
         //check whether Enter has pressed
@@ -727,10 +730,12 @@ void erase_menu_texts(){
     //erase "FLAPPY BIRD"
     //erase "PRESS ENTER TO START"
     char text_to_erase_game_name[] = "           \0";
+    char text_to_erase_instruction[] = "                                 \0";
     char text_to_erase_display[] = "                    \0";
 
     //use character buffer
     video_text(44, 15, text_to_erase_game_name);
+    video_text(34, 30, text_to_erase_instruction);
     video_text(40, 44, text_to_erase_display);
 }
 
@@ -799,7 +804,7 @@ void do_bird_jump(bird_t* bird){
     if (RVALID) {
         char key_data = PS2_data & 0xFF;
         if (key_data == (char)SPACE_KEY){
-            *(PS2_ptr) = 0xF4;
+            (bird -> y) -= BIRD_JUMP_Y;
             (bird -> y_velocity) = BIRD_JUMP_VELOCITY;
         }
     }
@@ -984,7 +989,7 @@ void video_text(int x, int y, char * text_ptr) {
     }
 }
 
-void clearReadFIFO(){
+void clear_read_FIFO(){
     volatile int * PS2_ptr = (int *)PS2_BASE;
     *(PS2_ptr) = 0xF5; //disable keyboard input
     //clear read FIFO
