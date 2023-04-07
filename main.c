@@ -392,6 +392,10 @@ void initialize_game(game_state_t *game) {
     initialize_pipes(game->pipes);
     initialize_grasses(game->grasses);
     initialize_bird(&game->bird);
+
+
+    erase_game_over_texts();
+    erase_menu_texts();
 }
 
 void initialize_pipe(pipe_t *pipe, int i) {
@@ -1080,6 +1084,7 @@ void change_mode(game_state_t *game){
         char key_data = PS2_data & 0xFF;
         //Enter has pressed when the mode is menu
         if((game -> mode) == MODE_MENU && key_data == (char)ENTER_KEY){
+            erase_game_over_texts();
             erase_menu_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_GAME;
@@ -1090,6 +1095,7 @@ void change_mode(game_state_t *game){
         }
         else if((game -> mode) == MODE_GAME_OVER && key_data == (char)ENTER_KEY){
             erase_game_over_texts();
+            erase_menu_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_GAME;
             (game->score) = 0;
@@ -1099,6 +1105,7 @@ void change_mode(game_state_t *game){
         }
         else if ((game -> mode) == MODE_GAME_OVER && key_data == (char)BACK_SPACE_KEY){
             erase_game_over_texts();
+            erase_menu_texts();
             *(PS2_ptr) = 0xF4;
             (game -> mode) = MODE_MENU;
             (game->score) = 0;
