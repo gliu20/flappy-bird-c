@@ -303,6 +303,7 @@ bool bird_in_screen(bird_t bird);
 bool did_collide(bird_t bird, pipe_t pipe);
 bool is_game_over(game_state_t *game);
 bool is_out_of_bounds(int x, int min, int max);
+bool is_offscreen(int x, int y);
 void change_mode(game_state_t *game);
 
 // Game logic
@@ -445,12 +446,30 @@ inline bool is_out_of_bounds(int x, int min, int max) {
     return false;
 }
 
+
+inline int clamp(int x, int min, int max) {
+    if (x > max) return max;
+    if (x < min) return min;
+
+    return x;
+}
+
 inline void draw_pixel(int x, int y, color_t color) {
     // Don't display offscreen pixels
-    if (is_out_of_bounds(x, 0, RESOLUTION_X - 1)) return;
-    if (is_out_of_bounds(y, 0, RESOLUTION_Y - 1)) return;
+    if (is_offscreen(x, y)) return;
     
     // Actually plot pixel
+    *(color_t *)(pixel_buffer_start + (y << 10) + (x << 1)) = color;
+}
+
+inline bool is_offscreen(int x, int y) {
+    if (is_out_of_bounds(x, 0, RESOLUTION_X - 1)) return true;
+    if (is_out_of_bounds(y, 0, RESOLUTION_Y - 1)) return true;
+    return false;
+}
+
+// No bounds checking
+inline void draw_pixel_optim(int x, int y, color_t color) {
     *(color_t *)(pixel_buffer_start + (y << 10) + (x << 1)) = color;
 }
 
@@ -464,9 +483,17 @@ inline void draw_pixel(int x, int y, color_t color) {
  * @param line_color - color
 */
 inline void draw_rect(int x0, int y0, int x1, int y1, color_t line_color) {
-    for (int x = x0; x <= x1; x++) {
-        for (int y = y0; y <= y1; y++) {
-            draw_pixel(x, y, line_color);
+
+    if (is_offscreen(x0, y0) && is_offscreen(x1, y1)) return;
+
+    int clamped_x0 = clamp(x0, 0, RESOLUTION_X - 1);
+    int clamped_x1 = clamp(x1, 0, RESOLUTION_X - 1);
+    int clamped_y0 = clamp(y0, 0, RESOLUTION_Y - 1);
+    int clamped_y1 = clamp(y1, 0, RESOLUTION_Y - 1);
+
+    for (int x = clamped_x0; x <= clamped_x1; x++) {
+        for (int y = clamped_y0; y <= clamped_y1; y++) {
+            draw_pixel_optim(x, y, line_color);
         }
     }
 }
