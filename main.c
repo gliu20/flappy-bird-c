@@ -889,7 +889,7 @@ void draw_background(game_state_t *game) {
         draw_rect(0, 0, SCROLL_VIEW_AMOUNT * 3, SKY_THICKNESS - 1, SKY);
 
         // Clear column for bird
-        draw_rect(BIRD_INITIAL_X, 0, BIRD_INITIAL_X + BIRD_WIDTH, SKY_THICKNESS - 1, SKY);
+        draw_rect(BIRD_INITIAL_X - 2, 0, BIRD_INITIAL_X + BIRD_WIDTH, SKY_THICKNESS - 1, SKY);
 
         // Clear at each pipe
         for (int i = 0; i < NUM_PIPES; i++) {
