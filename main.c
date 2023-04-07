@@ -1225,7 +1225,7 @@ void draw_word_game_over(int x, int y, color_t line_color){
     draw_rect(x + 62, y + 15, x + 73, y + 17, line_color);
 
     //starting point of O
-    int over_x = x + 76;
+    int over_x = x + 94;
 
     //draw O
     draw_rect(over_x + 1, y + 6, over_x + 3, y + 11, line_color);
@@ -1245,13 +1245,19 @@ void draw_word_game_over(int x, int y, color_t line_color){
     draw_rect(over_x + 13, y + 12, over_x + 15, y + 14, line_color);
 	draw_rect(over_x + 14, y + 6, over_x + 16, y + 11, line_color);
     //draw V
-    draw_rect(over_x + 43, y, over_x + 43, y + 2, line_color);
-    draw_rect(over_x + 44, y + 1, over_x + 45, y + 9, line_color);
-    draw_rect(over_x + 45, y + 10, over_x + 46, y + 15, line_color);
-    draw_rect(over_x + 47, y + 15, over_x + 48, y + 17, line_color);
-    draw_rect(over_x + 52, y, over_x + 52, y + 2, line_color);
-    draw_rect(over_x + 50, y + 1, over_x + 51, y + 9, line_color);
-    draw_rect(over_x + 49, y + 10, over_x + 50, y + 15, line_color);
+    draw_rect(over_x + 20, y, over_x + 22, y + 1, line_color);
+	draw_rect(over_x + 21, y + 1, over_x + 23, y + 2, line_color);
+	draw_rect(over_x + 22, y + 3, over_x + 24, y + 6, line_color);
+	draw_rect(over_x + 23, y + 7, over_x + 25, y + 8, line_color);
+    draw_rect(over_x + 24, y + 9, over_x + 26, y + 12, line_color);
+    draw_rect(over_x + 25, y + 13, over_x + 27, y + 14, line_color);
+    draw_rect(over_x + 26, y + 15, over_x + 29, y + 17, line_color);
+	draw_rect(over_x + 33, y, over_x + 35, y + 1, line_color);
+	draw_rect(over_x + 32, y + 1, over_x + 34, y + 2, line_color);
+	draw_rect(over_x + 31, y + 3, over_x + 33, y + 6, line_color);
+	draw_rect(over_x + 30, y + 7, over_x + 32, y + 8, line_color);
+    draw_rect(over_x + 29, y + 9, over_x + 31, y + 12, line_color);
+    draw_rect(over_x + 28, y + 13, over_x + 30, y + 14, line_color);
     //draw E
     draw_rect(over_x + 40, y, over_x + 42, y + 17, line_color);
     draw_rect(over_x + 42, y, over_x + 53, y + 2, line_color);
