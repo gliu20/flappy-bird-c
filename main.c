@@ -64,8 +64,8 @@
 #define PIPE_COLOR 0x06F0
 #define PIPE_WIDTH 30
 #define PIPE_HEAD_HEIGHT 15
-#define PIPE_VOID_HEIGHT 60
-#define PIPE_SPACING 140
+#define PIPE_VOID_HEIGHT 70
+#define PIPE_SPACING 120
 #define PIPE_START_X 140
 
 /* Birds */
@@ -75,7 +75,7 @@
 #define BIRD_INITIAL_Y 100
 #define BIRD_INITIAL_VELOCITY -0.1
 #define BIRD_INITIAL_ANGLE 0
-#define BIRD_JUMP_VELOCITY 3
+#define BIRD_JUMP_VELOCITY 3.2
 #define BIRD_GRAVITY 0.4
 
 /* Modes */
