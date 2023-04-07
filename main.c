@@ -284,54 +284,65 @@ typedef struct game_state {
 
 
 
-// Initializers
-void initialize_game(game_state_t *game);
-void initialize_pipe(pipe_t *pipe, int i);
-void initialize_pipes(pipe_t pipes[]);
-void initialize_bird(bird_t *bird);
-void initialize_screen(game_state_t *game);
-void initialize_grasses(grass_t grasses[]);
-
-
 // Helpers
-int clamp(int x, int min, int max);
-void video_text(int x, int y, char * text_ptr);
-void erase_menu_texts();
-void erase_game_over_texts();
-void clear_read_FIFO();
-void draw_flappy_bird(int x, int y, color_t line_color);
-void draw_word_game_over(int x, int y, color_t line_color);
-
-// Graphics
-void draw_pixel(int x, int y, color_t line_color);
-void draw_rect(int x0, int y0, int x1, int y1, color_t line_color);
-void draw_rect_outline(int x0, int y0, int x1, int y1, color_t line_color);
-void draw_pipe(pipe_t pipe);
-void draw_bird(bird_t bird);
-void draw_game(game_state_t *game);
-void draw_game_over(game_state_t *game);
-void draw_menu(game_state_t *game, bird_t bird);
-void draw_grasses(grass_t grass[]);
-void draw_background(game_state_t *game);
-bool is_out_of_bounds(int x, int min, int max);
-
-// Control bird's position
-void do_bird_velocity(bird_t* bird);
-void do_bird_jump(bird_t* bird);
+bool bird_in_screen(bird_t bird);
 bool did_collide(bird_t bird, pipe_t pipe);
+bool is_game_over(game_state_t *game);
+bool is_out_of_bounds(int x, int min, int max);
+void change_mode(game_state_t *game);
 
 // Game logic
-bool is_game_over(game_state_t *game);
-bool bird_in_screen(bird_t bird);
-void change_mode(game_state_t *game);
+void do_bird_jump(bird_t* bird);
+void do_bird_velocity(bird_t* bird);
+void do_scroll_clouds(game_state_t *game);
+void do_scroll_grasses(game_state_t *game);
+void do_scroll_pipes(game_state_t *game);
 void do_scroll_view(game_state_t *game);
-void do_update_score(game_state_t *game);
 void do_update_best_score(game_state_t *game);
+void do_update_score(game_state_t *game);
+
+// Draw code
+void draw_background(game_state_t *game);
+void draw_bird(bird_t bird);
+void draw_digit(int digit, int x_offset, int x, int y, color_t color);
+void draw_flappy_bird(int x, int y, color_t line_color);
+void draw_game(game_state_t *game);
+void draw_game_over(game_state_t *game);
+void draw_grasses(grass_t grass[]);
+void draw_integer(int n, int x, int y, color_t color);
+void draw_menu(game_state_t *game, bird_t bird);
+void draw_pipe(pipe_t pipe);
+void draw_pipes(pipe_t pipes[]);
+void draw_pixel(int x, int y, color_t color);
+void draw_rect(int x0, int y0, int x1, int y1, color_t line_color);
+void draw_rect_outline(int x0, int y0, int x1, int y1, color_t line_color);
+void draw_score(int score, int x, int y);
+void draw_slanted_rect(int x0, int y0, int x1, int y1, color_t color);
+void draw_slanted_rect_outline(int x0, int y0, int x1, int y1, color_t line_color);
+void draw_word_game_over(int x, int y, color_t line_color);
+
+// Erase text code
+void erase_game_over_texts();
+void erase_menu_texts();
+
+// Initializers 
+void initialize_bird(bird_t *bird);
+void initialize_game(game_state_t *game);
+void initialize_grass(grass_t *grass, int i);
+void initialize_grasses(grass_t grasses[]);
+void initialize_pipe(pipe_t *pipe, int i);
+void initialize_pipes(pipe_t pipes[]);
+void initialize_screen(game_state_t *game);
+
 
 // Screen/VGA
-void next_frame();
+void clear_read_FIFO();
 void clear_screen();
+void next_frame();
+void video_text(int x, int y, char * text_ptr);
 void wait_for_vsync();
+
+
 
 int main(void) {
     game_state_t game;
