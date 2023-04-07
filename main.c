@@ -76,6 +76,7 @@
 #define BIRD_INITIAL_VELOCITY 0.1
 #define BIRD_INITIAL_ANGLE 0
 #define BIRD_JUMP_VELOCITY -2
+#define BIRD_GRAVITY 0.1
 
 /* Modes */
 #define MODE_MENU 0
@@ -814,7 +815,7 @@ void do_bird_velocity(bird_t* bird){
     (bird -> y) = (bird -> y) + (bird -> y_velocity);
 
     //update y velocity
-    (bird -> y_velocity) += 0.01;
+    (bird -> y_velocity) += BIRD_GRAVITY;
 }
 
 void do_bird_jump(bird_t* bird){
