@@ -73,10 +73,10 @@
 #define BIRD_HEIGHT 24
 #define BIRD_INITIAL_X 20
 #define BIRD_INITIAL_Y 100
-#define BIRD_INITIAL_VELOCITY 0.1
+#define BIRD_INITIAL_VELOCITY -0.1
 #define BIRD_INITIAL_ANGLE 0
-#define BIRD_JUMP_VELOCITY -2
-#define BIRD_GRAVITY 0.1
+#define BIRD_JUMP_VELOCITY 3
+#define BIRD_GRAVITY 0.4
 
 /* Modes */
 #define MODE_MENU 0
@@ -812,10 +812,10 @@ void draw_background(game_state_t *game) {
 // Control bird's position
 void do_bird_velocity(bird_t* bird){
     //update y position
-    (bird -> y) = (bird -> y) + (bird -> y_velocity);
+    bird->y -= bird->y_velocity;
 
     //update y velocity
-    (bird -> y_velocity) += BIRD_GRAVITY;
+    bird->y_velocity -= BIRD_GRAVITY;
 }
 
 void do_bird_jump(bird_t* bird){
@@ -825,9 +825,8 @@ void do_bird_jump(bird_t* bird){
     int RVALID = PS2_data & 0x8000; // extract the RVALID field
     if (RVALID) {
         char key_data = PS2_data & 0xFF;
-        if (key_data == (char)SPACE_KEY){
-            (bird -> y) -= 7;
-            (bird -> y_velocity) -= 0.1;
+        if (key_data == (char) SPACE_KEY){
+            bird->y_velocity = BIRD_JUMP_VELOCITY;
         }
     }
 }
