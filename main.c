@@ -347,10 +347,9 @@ int main(void) {
 
 // Initializers
 void initialize_game(game_state_t *game) {
-    // TODO @debug for testing we start at MODE_GAME
-    // In practice, we want to change this to MODE_MENU
     game->mode = MODE_MENU;
     game->score = 0;
+    game->best_score = 0;
 
     initialize_pipes(game->pipes);
     initialize_grasses(game->grasses);
