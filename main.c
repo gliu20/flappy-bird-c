@@ -66,6 +66,7 @@
 #define PIPE_HEAD_HEIGHT 15
 #define PIPE_VOID_HEIGHT 60
 #define PIPE_SPACING 90
+#define PIPE_START_X 140
 
 /* Birds */
 #define BIRD_WIDTH 32
@@ -74,10 +75,8 @@
 #define BIRD_INITIAL_Y 100
 #define BIRD_INITIAL_VELOCITY 0.1
 #define BIRD_INITIAL_ANGLE 0
-#define BIRD_VELOCUTY_FACTOR_POS 1.2
-#define BIRD_VELOCUTY_FACTOR_NEG 0.8
 #define BIRD_JUMP_VELOCITY -2
-#define BIRD_JUMP_Y 5
+#define BIRD_GRAVITY 0.1
 
 /* Modes */
 #define MODE_MENU 0
@@ -245,6 +244,10 @@ typedef struct pipe {
     // The height of the void where the bird
     // can fit through
     int void_height;
+
+    // Keeps track of whether we already added going
+    // through this pipe to the score
+    bool did_score_update;
 } pipe_t;
 
 
@@ -254,6 +257,14 @@ typedef struct grass {
     int left_x;
     int right_x;
 } grass_t;
+
+
+typedef struct cloud {
+    int left_x;
+    int top_y;
+
+    int type;
+} cloud_t;
 
 typedef short int color_t;
 
@@ -274,54 +285,65 @@ typedef struct game_state {
 
 
 
-// Initializers
-void initialize_game(game_state_t *game);
-void initialize_pipe(pipe_t *pipe, int i);
-void initialize_pipes(pipe_t pipes[]);
-void initialize_bird(bird_t *bird);
-void initialize_screen(game_state_t *game);
-void initialize_grasses(grass_t grasses[]);
-
-
 // Helpers
-int clamp(int x, int min, int max);
-void video_text(int x, int y, char * text_ptr);
-void erase_menu_texts();
-void erase_game_over_texts();
-void clear_read_FIFO();
-void draw_flappy_bird(int x, int y, color_t line_color);
-void draw_word_game_over(int x, int y, color_t line_color);
-
-// Graphics
-void draw_pixel(int x, int y, color_t line_color);
-void draw_rect(int x0, int y0, int x1, int y1, color_t line_color);
-void draw_rect_outline(int x0, int y0, int x1, int y1, color_t line_color);
-void draw_pipe(pipe_t pipe);
-void draw_bird(bird_t bird);
-void draw_game(game_state_t *game);
-void draw_game_over(game_state_t *game);
-void draw_menu(game_state_t *game, bird_t bird);
-void draw_grasses(grass_t grass[]);
-void draw_background(game_state_t *game);
-bool is_out_of_bounds(int x, int min, int max);
-
-// Control bird's position
-void do_bird_velocity(bird_t* bird);
-void do_bird_jump(bird_t* bird);
+bool bird_in_screen(bird_t bird);
 bool did_collide(bird_t bird, pipe_t pipe);
+bool is_game_over(game_state_t *game);
+bool is_out_of_bounds(int x, int min, int max);
+void change_mode(game_state_t *game);
 
 // Game logic
-bool is_game_over(game_state_t *game);
-bool bird_in_screen(bird_t bird);
-void change_mode(game_state_t *game);
+void do_bird_jump(bird_t* bird);
+void do_bird_velocity(bird_t* bird);
+void do_scroll_clouds(game_state_t *game);
+void do_scroll_grasses(game_state_t *game);
+void do_scroll_pipes(game_state_t *game);
 void do_scroll_view(game_state_t *game);
-void do_update_score(game_state_t *game);
 void do_update_best_score(game_state_t *game);
+void do_update_score(game_state_t *game);
+
+// Draw code
+void draw_background(game_state_t *game);
+void draw_bird(bird_t bird);
+void draw_digit(int digit, int x_offset, int x, int y, color_t color);
+void draw_flappy_bird(int x, int y, color_t line_color);
+void draw_game(game_state_t *game);
+void draw_game_over(game_state_t *game);
+void draw_grasses(grass_t grass[]);
+void draw_integer(int n, int x, int y, color_t color);
+void draw_menu(game_state_t *game, bird_t bird);
+void draw_pipe(pipe_t pipe);
+void draw_pipes(pipe_t pipes[]);
+void draw_pixel(int x, int y, color_t color);
+void draw_rect(int x0, int y0, int x1, int y1, color_t line_color);
+void draw_rect_outline(int x0, int y0, int x1, int y1, color_t line_color);
+void draw_score(int score, int x, int y);
+void draw_slanted_rect(int x0, int y0, int x1, int y1, color_t color);
+void draw_slanted_rect_outline(int x0, int y0, int x1, int y1, color_t line_color);
+void draw_word_game_over(int x, int y, color_t line_color);
+
+// Erase text code
+void erase_game_over_texts();
+void erase_menu_texts();
+
+// Initializers 
+void initialize_bird(bird_t *bird);
+void initialize_game(game_state_t *game);
+void initialize_grass(grass_t *grass, int i);
+void initialize_grasses(grass_t grasses[]);
+void initialize_pipe(pipe_t *pipe, int i);
+void initialize_pipes(pipe_t pipes[]);
+void initialize_screen(game_state_t *game);
+
 
 // Screen/VGA
-void next_frame();
+void clear_read_FIFO();
 void clear_screen();
+void next_frame();
+void video_text(int x, int y, char * text_ptr);
 void wait_for_vsync();
+
+
 
 int main(void) {
     game_state_t game;
@@ -345,10 +367,9 @@ int main(void) {
 
 // Initializers
 void initialize_game(game_state_t *game) {
-    // TODO @debug for testing we start at MODE_GAME
-    // In practice, we want to change this to MODE_MENU
     game->mode = MODE_MENU;
     game->score = 0;
+    game->best_score = 0;
 
     initialize_pipes(game->pipes);
     initialize_grasses(game->grasses);
@@ -356,10 +377,11 @@ void initialize_game(game_state_t *game) {
 }
 
 void initialize_pipe(pipe_t *pipe, int i) {
-    pipe->x = i * PIPE_SPACING;
+    pipe->x = i * PIPE_SPACING + PIPE_START_X;
     pipe->y = rand() % (RESOLUTION_Y - PIPE_VOID_HEIGHT * 2 - TOTAL_FLOOR_HEIGHT) + PIPE_VOID_HEIGHT;
     pipe->width = PIPE_WIDTH;
     pipe->void_height = PIPE_VOID_HEIGHT;
+    pipe->did_score_update = false;
 }
 
 void initialize_grass(grass_t *grass, int i) {
@@ -660,7 +682,7 @@ void draw_game(game_state_t *game) {
 
 void draw_game_over(game_state_t *game) {
     clear_read_FIFO();
-    do_update_best_score(&game);
+    do_update_best_score(game);
     while (game -> mode == MODE_GAME_OVER) {
         draw_background(game);
 
@@ -793,7 +815,7 @@ void do_bird_velocity(bird_t* bird){
     (bird -> y) = (bird -> y) + (bird -> y_velocity);
 
     //update y velocity
-    (bird -> y_velocity) += 0.01;
+    (bird -> y_velocity) += BIRD_GRAVITY;
 }
 
 void do_bird_jump(bird_t* bird){
@@ -811,7 +833,7 @@ void do_bird_jump(bird_t* bird){
 }
 
 
-void do_scroll_view(game_state_t *game) {   
+void do_scroll_pipes(game_state_t *game) {
 
     // Scroll pipes 
     for (int i = 0; i < NUM_PIPES; i++) {
@@ -821,16 +843,12 @@ void do_scroll_view(game_state_t *game) {
         // at end of screen
         if (pipe->x < -PIPE_WIDTH / 2) {
             initialize_pipe(pipe, NUM_PIPES);
-
-            // Before resetting when we've last seen a pipe, we must
-            // request a score update so in case it's been overdue
-            // we don't accidentally miss out on updating the score
-            do_update_score(game);
-            game->time_since_seen_pipe = 0;
         }
         pipe->x -= SCROLL_VIEW_AMOUNT;
     }
+}
 
+void do_scroll_grasses(game_state_t *game) {
     // Scroll grasses
     grass_t *prev_grass = &game->grasses[NUM_GRASS_SQUARE - 1];
     grass_t *curr_grass;
@@ -856,13 +874,30 @@ void do_scroll_view(game_state_t *game) {
         grass->left_x -= SCROLL_VIEW_AMOUNT;
         grass->right_x -= SCROLL_VIEW_AMOUNT;
     }
-        
+}
+
+void do_scroll_clouds(game_state_t *game) {
+
+}
+
+void do_scroll_view(game_state_t *game) {   
+    do_scroll_pipes(game);
+    do_scroll_grasses(game);
+    do_scroll_clouds(game);
 }
 
 void do_update_score(game_state_t *game) {
-    if (game->time_since_seen_pipe++ > SCORE_UPDATE_TIME_OFFSET) {
-        game->score++;
-        game->time_since_seen_pipe = 0;
+    for (int i = 0; i < NUM_PIPES; i++) {
+        pipe_t *pipe = &game->pipes[i];
+
+        int bird_center_x = game->bird.x + BIRD_WIDTH / 2;
+        bool did_pipe_pass_bird = pipe->x < bird_center_x;
+        bool did_score_update = pipe->did_score_update;
+
+        if (did_pipe_pass_bird && !did_score_update) {
+            pipe->did_score_update = true;
+            game->score++;
+        }
     }
 }
 
