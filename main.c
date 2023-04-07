@@ -257,6 +257,14 @@ typedef struct grass {
     int right_x;
 } grass_t;
 
+
+typedef struct cloud {
+    int left_x;
+    int top_y;
+
+    int type;
+} cloud_t;
+
 typedef short int color_t;
 
 
