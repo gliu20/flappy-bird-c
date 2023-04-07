@@ -60,12 +60,12 @@
 #define SCORE_UPDATE_TIME_OFFSET 10
 
 /* Pipes */
-#define NUM_PIPES 5
+#define NUM_PIPES 4
 #define PIPE_COLOR 0x06F0
 #define PIPE_WIDTH 30
 #define PIPE_HEAD_HEIGHT 15
-#define PIPE_VOID_HEIGHT 60
-#define PIPE_SPACING 140
+#define PIPE_VOID_HEIGHT 70
+#define PIPE_SPACING 120
 #define PIPE_START_X 140
 
 /* Birds */
@@ -73,10 +73,10 @@
 #define BIRD_HEIGHT 24
 #define BIRD_INITIAL_X 20
 #define BIRD_INITIAL_Y 100
-#define BIRD_INITIAL_VELOCITY 0.1
+#define BIRD_INITIAL_VELOCITY -0.1
 #define BIRD_INITIAL_ANGLE 0
-#define BIRD_JUMP_VELOCITY -2
-#define BIRD_GRAVITY 0.1
+#define BIRD_JUMP_VELOCITY 3.2
+#define BIRD_GRAVITY 0.4
 
 /* Modes */
 #define MODE_MENU 0
@@ -250,14 +250,12 @@ typedef struct pipe {
     bool did_score_update;
 } pipe_t;
 
-
 typedef struct grass {
     // Unlike pipe, grass coordinates are not centered for
     // ease of programming
     int left_x;
     int right_x;
 } grass_t;
-
 
 typedef struct cloud {
     int left_x;
@@ -267,7 +265,6 @@ typedef struct cloud {
 } cloud_t;
 
 typedef short int color_t;
-
 
 typedef struct game_state {
     grass_t grasses[NUM_GRASS_SQUARE];
@@ -282,8 +279,6 @@ typedef struct game_state {
     // Used to keep track of when we passed a pipe
     int time_since_seen_pipe;
 } game_state_t;
-
-
 
 // Helpers
 bool bird_in_screen(bird_t bird);
@@ -712,6 +707,9 @@ void draw_game_over(game_state_t *game) {
         video_text(28, 32, text_for_restart);
         video_text(26, 42, text_for_menu);
 
+        draw_score(game->score, 200, 80);
+        draw_score(game->best_score, 200, 100);
+
         //check whether Enter or Back has pressed
         change_mode(game);
         next_frame();
@@ -816,10 +814,10 @@ void draw_background(game_state_t *game) {
 // Control bird's position
 void do_bird_velocity(bird_t* bird){
     //update y position
-    (bird -> y) = (bird -> y) + (bird -> y_velocity);
+    bird->y -= bird->y_velocity;
 
     //update y velocity
-    (bird -> y_velocity) += BIRD_GRAVITY;
+    bird->y_velocity -= BIRD_GRAVITY;
 }
 
 void do_bird_jump(bird_t* bird){
@@ -829,9 +827,8 @@ void do_bird_jump(bird_t* bird){
     int RVALID = PS2_data & 0x8000; // extract the RVALID field
     if (RVALID) {
         char key_data = PS2_data & 0xFF;
-        if (key_data == (char)SPACE_KEY){
-            (bird -> y) -= 7;
-            (bird -> y_velocity) -= 0.1;
+        if (key_data == (char) SPACE_KEY){
+            bird->y_velocity = BIRD_JUMP_VELOCITY;
         }
     }
 }
@@ -840,7 +837,6 @@ void do_bird_jump(bird_t* bird){
 void do_scroll_pipes(game_state_t *game) {
 
     pipe_t *prev_pipe = &game->pipes[NUM_PIPES - 1];
-    pipe_t *curr_pipe;
     
     // Wrap around pipes
     for (int i = 0; i < NUM_PIPES; i++) {
