@@ -266,6 +266,7 @@ typedef struct game_state {
     // Can be any of the MODE_* in the #define
     int mode;
     int score;
+    int best_score;
 
     // Used to keep track of when we passed a pipe
     int time_since_seen_pipe;
@@ -289,6 +290,7 @@ void erase_menu_texts();
 void erase_game_over_texts();
 void clear_read_FIFO();
 void draw_flappy_bird(int x, int y, color_t line_color);
+void draw_word_game_over(int x, int y, color_t line_color);
 
 // Graphics
 void draw_pixel(int x, int y, color_t line_color);
@@ -314,6 +316,7 @@ bool bird_in_screen(bird_t bird);
 void change_mode(game_state_t *game);
 void do_scroll_view(game_state_t *game);
 void do_update_score(game_state_t *game);
+void do_update_best_score(game_state_t *game);
 
 // Screen/VGA
 void next_frame();
@@ -657,16 +660,19 @@ void draw_game(game_state_t *game) {
 
 void draw_game_over(game_state_t *game) {
     clear_read_FIFO();
+    do_update_best_score(&game);
     while (game -> mode == MODE_GAME_OVER) {
         draw_background(game);
 
         //display "GAME OVER"
         //display "SCORE: "
+        //display "BEST: "
         //display "PRESS ENTER TO RESTART"
         //display "PRESS BACK TO GO TO MENU"
-        char text_for_game_state[] = "GAME OVER\0";
-        char text_for_score[] = "SCORE:\0 ";
-        char text_for_restart[] = "PRESS ENTER TO RESTART\0";
+        draw_word_game_over(50, 30, WHITE);
+        char text_for_score[] = "SCORE:\0";
+        char text_for_best_score[] = "BEST:\0";
+        char text_for_restart[] = "PRESS ENTER TO PLAY AGAIN\0";
         char text_for_menu[] = "PRESS BACKSPACE TO GO TO MENU\0";
 
        // char score[10];
@@ -675,8 +681,8 @@ void draw_game_over(game_state_t *game) {
        // strcat(text_for_score,score);
 
         //use character buffer
-        video_text(35, 12, text_for_game_state);
         video_text(36, 22, text_for_score);
+        video_text(37, 27, text_for_best_score);
         video_text(29, 32, text_for_restart);
         video_text(26, 42, text_for_menu);
 
@@ -687,18 +693,18 @@ void draw_game_over(game_state_t *game) {
 }
 
 void erase_game_over_texts(){
-    //display "GAME OVER"
-    //display "SCORE: "
-    //display "PRESS ENTER TO RESTART"
-    //display "PRESS BACK TO GO TO MENU"
-    char text_for_game_state[] = "         \0";
+    //erase "SCORE: "
+    //erase "BEST: "
+    //erase "PRESS ENTER TO RESTART"
+    //erase "PRESS BACK TO GO TO MENU"
     char text_for_score[] = "                        \0 ";
-    char text_for_restart[] = "                      \0";
+    char text_for_best_score[] = "                     \0 ";
+    char text_for_restart[] = "                         \0";
     char text_for_menu[] = "                             \0";
 
     //use character buffer
-    video_text(35, 12, text_for_game_state);
     video_text(36, 22, text_for_score);
+    video_text(37, 27, text_for_best_score);
     video_text(29, 32, text_for_restart);
     video_text(26, 42, text_for_menu);
 }
@@ -857,6 +863,12 @@ void do_update_score(game_state_t *game) {
     if (game->time_since_seen_pipe++ > SCORE_UPDATE_TIME_OFFSET) {
         game->score++;
         game->time_since_seen_pipe = 0;
+    }
+}
+
+void do_update_best_score(game_state_t *game){
+    if (game->score > game->best_score) {
+        game->best_score = game->score;
     }
 }
 
@@ -1112,4 +1124,49 @@ void draw_flappy_bird(int x, int y, color_t line_color){
     draw_rect(bird_x + 65, y + 14, bird_x + 67, y + 15, line_color); 
     draw_rect(bird_x + 66, y + 13, bird_x + 68, y + 14, line_color);
     draw_rect(bird_x + 67, y + 11, bird_x + 69, y + 12, line_color);
+}
+
+void draw_word_game_over(int x, int y, color_t line_color){
+    //draw G
+    //draw A
+    draw_rect(x + 44, y, x + 48, y + 1, line_color); 
+    draw_rect(x + 43, y + 2, x + 45, y + 4, line_color);
+    draw_rect(x + 42, y + 5, x + 44, y + 7, line_color);
+    draw_rect(x + 41, y + 8, x + 43, y + 10, line_color);
+    draw_rect(x + 40, y + 11, x + 42, y + 13, line_color);
+    draw_rect(x + 39, y + 14, x + 41, y + 16, line_color);
+    draw_rect(x + 38, y + 17, x + 40, y + 17, line_color);
+    draw_rect(x + 47, y + 2, x + 49, y + 4, line_color);
+    draw_rect(x + 48, y + 5, x + 50, y + 7, line_color);
+    draw_rect(x + 49, y + 8, x + 51, y + 10, line_color);
+    draw_rect(x + 50, y + 11, x + 52, y + 13, line_color);
+    draw_rect(x + 51, y + 14, x + 53, y + 16, line_color);
+    draw_rect(x + 52, y + 17, x + 54, y + 17, line_color);
+    draw_rect(x + 43, y + 9, x + 49, y + 11, line_color);
+    //draw M
+    //draw E
+
+    int over_x = x + 100;
+
+    //draw O
+    //draw V
+    //draw E
+    //draw R
+    draw_rect(over_x + 37, y, over_x + 39, y + 17, line_color); 
+    draw_rect(over_x + 40, y, over_x + 45, y + 1, line_color);
+    draw_rect(over_x + 46, y + 1, over_x + 48, y + 1, line_color);
+    draw_rect(over_x + 46, y + 2, over_x + 49, y + 2, line_color);
+    draw_rect(over_x + 48, y + 3, over_x + 50, y + 3, line_color);
+    draw_rect(over_x + 48, y + 4, over_x + 50, y + 5, line_color);
+    draw_rect(over_x + 48, y + 6, over_x + 50, y + 6, line_color);
+    draw_rect(over_x + 46, y + 7, over_x + 49, y + 7, line_color);
+    draw_rect(over_x + 46, y + 8, over_x + 48, y + 8, line_color);
+    draw_rect(over_x + 40, y + 8, over_x + 45, y + 9, line_color);
+    draw_rect(over_x + 43, y + 9, over_x + 45, y + 10, line_color);
+	draw_rect(over_x + 44, y + 10, over_x + 46, y + 10, line_color);
+    draw_rect(over_x + 45, y + 11, over_x + 47, y + 11, line_color);
+    draw_rect(over_x + 46, y + 12, over_x + 48, y + 13, line_color);
+    draw_rect(over_x + 47, y + 14, over_x + 49, y + 14, line_color);
+    draw_rect(over_x + 48, y + 15, over_x + 50, y + 16, line_color);
+    draw_rect(over_x + 49, y + 17, over_x + 51, y + 17, line_color);
 }
