@@ -66,6 +66,7 @@
 #define PIPE_HEAD_HEIGHT 15
 #define PIPE_VOID_HEIGHT 60
 #define PIPE_SPACING 90
+#define PIPE_START_X 50
 
 /* Birds */
 #define BIRD_WIDTH 32
@@ -357,7 +358,7 @@ void initialize_game(game_state_t *game) {
 }
 
 void initialize_pipe(pipe_t *pipe, int i) {
-    pipe->x = i * PIPE_SPACING;
+    pipe->x = i * PIPE_SPACING + PIPE_START_X;
     pipe->y = rand() % (RESOLUTION_Y - PIPE_VOID_HEIGHT * 2 - TOTAL_FLOOR_HEIGHT) + PIPE_VOID_HEIGHT;
     pipe->width = PIPE_WIDTH;
     pipe->void_height = PIPE_VOID_HEIGHT;
@@ -813,7 +814,7 @@ void do_bird_jump(bird_t* bird){
 }
 
 
-void do_scroll_view(game_state_t *game) {   
+void do_scroll_pipes(game_state_t *game) {
 
     // Scroll pipes 
     for (int i = 0; i < NUM_PIPES; i++) {
@@ -826,7 +827,9 @@ void do_scroll_view(game_state_t *game) {
         }
         pipe->x -= SCROLL_VIEW_AMOUNT;
     }
+}
 
+void do_scroll_grasses(game_state_t *game) {
     // Scroll grasses
     grass_t *prev_grass = &game->grasses[NUM_GRASS_SQUARE - 1];
     grass_t *curr_grass;
@@ -852,14 +855,24 @@ void do_scroll_view(game_state_t *game) {
         grass->left_x -= SCROLL_VIEW_AMOUNT;
         grass->right_x -= SCROLL_VIEW_AMOUNT;
     }
-        
+}
+
+void do_scroll_clouds(game_state_t *game) {
+
+}
+
+void do_scroll_view(game_state_t *game) {   
+    do_scroll_pipes(game);
+    do_scroll_grasses(game);
+    do_scroll_clouds(game);
 }
 
 void do_update_score(game_state_t *game) {
     for (int i = 0; i < NUM_PIPES; i++) {
         pipe_t *pipe = &game->pipes[i];
 
-        bool did_pipe_pass_bird = pipe->x < game->bird.x;
+        int bird_center_x = game->bird.x + BIRD_WIDTH / 2;
+        bool did_pipe_pass_bird = pipe->x < bird_center_x;
         bool did_score_update = pipe->did_score_update;
 
         if (did_pipe_pass_bird && !did_score_update) {
