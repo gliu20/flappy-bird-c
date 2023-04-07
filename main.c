@@ -657,7 +657,7 @@ void draw_game(game_state_t *game) {
 
 void draw_game_over(game_state_t *game) {
     clear_read_FIFO();
-    do_update_best_score(&game);
+    do_update_best_score(game);
     while (game -> mode == MODE_GAME_OVER) {
         draw_background(game);
 
