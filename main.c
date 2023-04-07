@@ -1,3 +1,5 @@
+#define USE_CPULATOR true
+
 /* This files provides address values that exist in the system */
 #define SDRAM_BASE            0xC0000000
 #define FPGA_ONCHIP_BASE      0xC8000000
@@ -294,8 +296,9 @@ typedef struct game_state {
     int score;
     int best_score;
 
-    // Used to keep track of when we passed a pipe
-    int time_since_seen_pipe;
+    // Used to keep track of if first frame of game
+    // for optimization
+    int frame_count;
 } game_state_t;
 
 // Helpers
@@ -366,7 +369,7 @@ int main(void) {
     initialize_screen(&game);
 
     while (true) {
-        clear_screen();
+        //clear_screen();
         switch (game.mode) {
             case MODE_GAME: draw_game(&game); break;
             case MODE_GAME_OVER: draw_game_over(&game); break;
@@ -384,6 +387,7 @@ void initialize_game(game_state_t *game) {
     game->mode = MODE_MENU;
     game->score = 0;
     game->best_score = 0;
+    game->frame_count = 0;
 
     initialize_pipes(game->pipes);
     initialize_grasses(game->grasses);
@@ -720,6 +724,7 @@ void draw_game(game_state_t *game) {
     clear_read_FIFO();
     initialize_pipes(game->pipes);
     initialize_bird(&game->bird);
+    game->frame_count = 0;
 
     while (!is_game_over(game)) {
         draw_background(game);
@@ -735,6 +740,7 @@ void draw_game(game_state_t *game) {
         // TODO: need to add clear screen for performance
         // TODO: need code for bounce up
         next_frame();
+        game->frame_count++;
     }
 
     game->mode = MODE_GAME_OVER;
@@ -868,8 +874,29 @@ void draw_grasses(grass_t grass[]){
 }
 
 void draw_background(game_state_t *game) {
-    //draw sky
-    draw_rect(0, 0, RESOLUTION_X, SKY_THICKNESS - 1, SKY);
+    if (!USE_CPULATOR || game->frame_count <= 3 || game->mode != MODE_GAME) {
+        // Draw sky normally if not in game
+        draw_rect(0, 0, RESOLUTION_X, SKY_THICKNESS - 1, SKY);
+    }
+    else {
+        // Use optimized procedure while in game
+        // Clear column for first pipe
+        draw_rect(0, 0, SCROLL_VIEW_AMOUNT * 3, SKY_THICKNESS - 1, SKY);
+
+        // Clear column for bird
+        draw_rect(BIRD_INITIAL_X, 0, BIRD_INITIAL_X + BIRD_WIDTH, SKY_THICKNESS - 1, SKY);
+
+        // Clear at each pipe
+        for (int i = 0; i < NUM_PIPES; i++) {
+            pipe_t *pipe = &game->pipes[i];
+            int pipe_x = pipe->x + PIPE_WIDTH / 2;
+
+            // Clear a column at the curr pipe coordinate            
+            draw_rect(pipe_x, 0, pipe_x + SCROLL_VIEW_AMOUNT * 3, SKY_THICKNESS - 1, SKY);
+        }
+    }
+    
+
     //draw ground
     draw_rect(0, RESOLUTION_Y - GROUND_THICKNESS + 1, RESOLUTION_X, RESOLUTION_Y, SAND);
     //draw grass
