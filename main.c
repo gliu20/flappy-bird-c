@@ -78,6 +78,13 @@
 #define BIRD_JUMP_VELOCITY 3.2
 #define BIRD_GRAVITY 0.4
 
+/* Clouds */
+#define NUM_CLOUD_TYPES 1
+#define CLOUD_HEIGHT 5
+#define CLOUD_WIDTH 10
+#define CLOUD_SCALE 2
+
+
 /* Modes */
 #define MODE_MENU 0
 #define MODE_GAME 1
@@ -215,6 +222,17 @@ int digits_image[NUM_DIGITS][SCORE_CHAR_HEIGHT][SCORE_CHAR_WIDTH] = {
     }
 };
 
+short int cloud_colors[] = { RED, WHITE, GREY, BLACK };
+int clouds_image[NUM_CLOUD_TYPES][CLOUD_HEIGHT][CLOUD_WIDTH] = {
+    {
+        { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 },
+        { 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 },
+        { 0, 0, 2, 1, 1, 2, 1, 1, 0, 0 },
+        { 0, 1, 1, 2, 2, 1, 2, 1, 1, 0 },
+        { 1, 1, 2, 2, 2, 2, 2, 2, 1, 0 },
+        { 0, 1, 3, 3, 3, 3, 3, 1, 0, 0 },
+    }
+};
 
 // Global state
 typedef struct bird {
@@ -594,6 +612,26 @@ void draw_bird(bird_t bird){
     draw_rect(bird.x + 12, bird.y + 20, bird.x + 19, bird.y + 21, SAND);
     draw_rect(bird.x + 20, bird.y + 20, bird.x + 29, bird.y + 21, BLACK);
     draw_rect(bird.x + 12, bird.y + 22, bird.x + 19, bird.y + 23, BLACK); //48
+}
+
+
+void draw_cloud(cloud_t cloud) {
+    int x = cloud.left_x;
+    int y = cloud.top_y;
+
+    for (int i = 0; i < CLOUD_WIDTH; i++) {
+        for (int j = 0; j < CLOUD_HEIGHT; j++) {
+            int x_start = x + i * CLOUD_SCALE;
+            int y_start = y + j * CLOUD_SCALE;
+            int x_end = x_start + CLOUD_SCALE;
+            int y_end = y_start + CLOUD_SCALE;
+
+            int color_index = clouds_image[cloud.type][j][i];
+
+            if (color_index)
+                draw_rect(x_start, y_start, x_end, y_end, cloud_colors[color_index]);
+        }
+    }
 }
 
 void draw_digit(int digit, int x_offset, int x, int y, color_t color) {
