@@ -691,7 +691,11 @@ void draw_game_over(game_state_t *game) {
         //display "BEST: "
         //display "PRESS ENTER TO RESTART"
         //display "PRESS BACK TO GO TO MENU"
-        draw_word_game_over(50, 30, WHITE);
+        draw_word_game_over(74, 30, BLACK);
+		draw_word_game_over(76, 30, BLACK);
+		draw_word_game_over(75, 29, BLACK);
+		draw_word_game_over(75, 31, BLACK);
+        draw_word_game_over(75, 30, WHITE);
         char text_for_score[] = "SCORE:\0";
         char text_for_best_score[] = "BEST:\0";
         char text_for_restart[] = "PRESS ENTER TO PLAY AGAIN\0";
@@ -705,7 +709,7 @@ void draw_game_over(game_state_t *game) {
         //use character buffer
         video_text(36, 22, text_for_score);
         video_text(37, 27, text_for_best_score);
-        video_text(29, 32, text_for_restart);
+        video_text(28, 32, text_for_restart);
         video_text(26, 42, text_for_menu);
 
         //check whether Enter or Back has pressed
@@ -727,7 +731,7 @@ void erase_game_over_texts(){
     //use character buffer
     video_text(36, 22, text_for_score);
     video_text(37, 27, text_for_best_score);
-    video_text(29, 32, text_for_restart);
+    video_text(28, 32, text_for_restart);
     video_text(26, 42, text_for_menu);
 }
 
@@ -1224,6 +1228,7 @@ void draw_word_game_over(int x, int y, color_t line_color){
     draw_rect(x + 62, y + 7, x + 71, y + 9, line_color);
     draw_rect(x + 62, y + 15, x + 73, y + 17, line_color);
 
+    //starting point of O
     int over_x = x + 76;
 
     //draw O
@@ -1234,39 +1239,44 @@ void draw_word_game_over(int x, int y, color_t line_color){
     draw_rect(over_x + 7, y, over_x + 10, y + 1, line_color);  
     draw_rect(over_x + 11, y, over_x + 11, y + 2, line_color);
     draw_rect(over_x + 12, y + 1, over_x + 13, y + 3, line_color);
-    draw_rect(over_x + 13, y + 2, over_x + 14, y + 3, line_color);
+    draw_rect(over_x + 13, y + 3, over_x + 15, y + 5, line_color);
     draw_rect(over_x + 2, y + 12, over_x + 4, y + 14, line_color);
     draw_rect(over_x + 4, y + 14, over_x + 5, y + 16, line_color);
     draw_rect(over_x + 6, y + 15, over_x + 6, y + 17, line_color);
     draw_rect(over_x + 7, y + 16, over_x + 10, y + 17, line_color);  
-    draw_rect(over_x + 10, y + 15, over_x + 11, y + 17, line_color);
+    draw_rect(over_x + 11, y + 15, over_x + 11, y + 17, line_color);
     draw_rect(over_x + 12, y + 14, over_x + 13, y + 16, line_color);
-    draw_rect(over_x + 14, y + 13, over_x + 15, y + 14, line_color);
- 
+    draw_rect(over_x + 13, y + 12, over_x + 15, y + 14, line_color);
+	draw_rect(over_x + 14, y + 6, over_x + 16, y + 11, line_color);
     //draw V
+    draw_rect(over_x + 43, y, over_x + 43, y + 2, line_color);
+    draw_rect(over_x + 44, y + 1, over_x + 45, y + 9, line_color);
+    draw_rect(over_x + 45, y + 10, over_x + 46, y + 15, line_color);
+    draw_rect(over_x + 47, y + 15, over_x + 48, y + 17, line_color);
+    draw_rect(over_x + 52, y, over_x + 52, y + 2, line_color);
+    draw_rect(over_x + 50, y + 1, over_x + 51, y + 9, line_color);
+    draw_rect(over_x + 49, y + 10, over_x + 50, y + 15, line_color);
     //draw E
-    /*
-    draw_rect(x + 60, y, x + 62, y + 17, line_color);
-    draw_rect(x + 62, y, x + 73, y + 2, line_color);
-    draw_rect(x + 62, y + 7, x + 71, y + 9, line_color);
-    draw_rect(x + 62, y + 15, x + 73, y + 17, line_color);
+    draw_rect(over_x + 40, y, over_x + 42, y + 17, line_color);
+    draw_rect(over_x + 42, y, over_x + 53, y + 2, line_color);
+    draw_rect(over_x + 42, y + 7, over_x + 50, y + 9, line_color);
+    draw_rect(over_x + 42, y + 15, over_x + 53, y + 17, line_color);
     //draw R
-    draw_rect(over_x + 37, y, over_x + 39, y + 17, line_color); 
-    draw_rect(over_x + 40, y, over_x + 45, y + 1, line_color);
-    draw_rect(over_x + 46, y + 1, over_x + 48, y + 1, line_color);
-    draw_rect(over_x + 46, y + 2, over_x + 49, y + 2, line_color);
-    draw_rect(over_x + 48, y + 3, over_x + 50, y + 3, line_color);
-    draw_rect(over_x + 48, y + 4, over_x + 50, y + 5, line_color);
-    draw_rect(over_x + 48, y + 6, over_x + 50, y + 6, line_color);
-    draw_rect(over_x + 46, y + 7, over_x + 49, y + 7, line_color);
-    draw_rect(over_x + 46, y + 8, over_x + 48, y + 8, line_color);
-    draw_rect(over_x + 40, y + 8, over_x + 45, y + 9, line_color);
-    draw_rect(over_x + 43, y + 9, over_x + 45, y + 10, line_color);
-	draw_rect(over_x + 44, y + 10, over_x + 46, y + 10, line_color);
-    draw_rect(over_x + 45, y + 11, over_x + 47, y + 11, line_color);
-    draw_rect(over_x + 46, y + 12, over_x + 48, y + 13, line_color);
-    draw_rect(over_x + 47, y + 14, over_x + 49, y + 14, line_color);
-    draw_rect(over_x + 48, y + 15, over_x + 50, y + 16, line_color);
-    draw_rect(over_x + 49, y + 17, over_x + 51, y + 17, line_color);
-    */
+    draw_rect(over_x + 59, y, over_x + 61, y + 17, line_color); 
+    draw_rect(over_x + 62, y, over_x + 67, y + 1, line_color);
+    draw_rect(over_x + 68, y + 1, over_x + 70, y + 1, line_color);
+    draw_rect(over_x + 68, y + 2, over_x + 71, y + 2, line_color);
+    draw_rect(over_x + 70, y + 3, over_x + 72, y + 3, line_color);
+    draw_rect(over_x + 70, y + 4, over_x + 72, y + 5, line_color);
+    draw_rect(over_x + 70, y + 6, over_x + 72, y + 6, line_color);
+    draw_rect(over_x + 68, y + 7, over_x + 71, y + 7, line_color);
+    draw_rect(over_x + 68, y + 8, over_x + 70, y + 8, line_color);
+    draw_rect(over_x + 62, y + 8, over_x + 67, y + 9, line_color);
+    draw_rect(over_x + 65, y + 9, over_x + 67, y + 10, line_color);
+	draw_rect(over_x + 66, y + 10, over_x + 68, y + 10, line_color);
+    draw_rect(over_x + 67, y + 11, over_x + 69, y + 11, line_color);
+    draw_rect(over_x + 68, y + 12, over_x + 70, y + 13, line_color);
+    draw_rect(over_x + 69, y + 14, over_x + 71, y + 14, line_color);
+    draw_rect(over_x + 70, y + 15, over_x + 72, y + 16, line_color);
+    draw_rect(over_x + 71, y + 17, over_x + 73, y + 17, line_color);
 }
