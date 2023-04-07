@@ -899,16 +899,16 @@ void draw_background(game_state_t *game) {
             // Clear a column at the curr pipe coordinate 
             draw_rect(pipe_x, 0, pipe_x + SCROLL_VIEW_AMOUNT * 3, SKY_THICKNESS - 1, SKY);
         }
-    }
 
-    // Clear out space for score
-    draw_rect(
-        SCORE_POS_X - SCORE_CHAR_WIDTH * SCORE_CHAR_SCALE * 3, 
-        SCORE_POS_Y, 
-        SCORE_POS_X + SCORE_CHAR_WIDTH * SCORE_CHAR_SCALE, 
-        SCORE_POS_Y + SCORE_CHAR_HEIGHT, 
-        SKY
-    );
+        // Clear out space for score
+        draw_rect(
+            SCORE_POS_X - SCORE_CHAR_WIDTH * SCORE_CHAR_SCALE * 3, 
+            SCORE_POS_Y, 
+            SCORE_POS_X + SCORE_CHAR_WIDTH * SCORE_CHAR_SCALE, 
+            SCORE_POS_Y + SCORE_CHAR_HEIGHT * SCORE_CHAR_SCALE + 1, 
+            SKY
+        );
+    }
     
 
     //draw ground
