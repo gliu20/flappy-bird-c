@@ -65,7 +65,7 @@
 #define PIPE_WIDTH 30
 #define PIPE_HEAD_HEIGHT 15
 #define PIPE_VOID_HEIGHT 60
-#define PIPE_SPACING 90
+#define PIPE_SPACING 140
 #define PIPE_START_X 140
 
 /* Birds */
