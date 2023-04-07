@@ -712,7 +712,11 @@ void draw_menu(game_state_t *game, bird_t bird) {
         //display "FLAPPY BIRD"
         //display "PRESS SPACE TO LET THE BIRD JUMP"
         //display "PRESS ENTER TO START"
-        draw_flappy_bird(88, 45, ORANGE);
+        draw_flappy_bird(87, 45, BLACK);
+        draw_flappy_bird(89, 45, BLACK);
+        draw_flappy_bird(88, 44, BLACK);
+        draw_flappy_bird(88, 46, BLACK);
+        draw_flappy_bird(88, 45, WHITE);
         char text_for_instruction[] = "PRESS SPACE TO LET THE BIRD JUMP\0";
         char text_to_display[] = "PRESS ENTER TO START\0";
 
@@ -994,117 +998,118 @@ void clear_read_FIFO(){
 
 void draw_flappy_bird(int x, int y, color_t line_color){
     //draw F
-    draw_rect(x + 1, y, x + 2, y + 17, line_color);
-    draw_rect(x + 3, y, x + 14, y + 1, line_color);
-    draw_rect(x + 3, y + 7, x + 12, y + 8, line_color);
+    draw_rect(x + 1, y, x + 3, y + 17, line_color);
+    draw_rect(x + 3, y, x + 14, y + 2, line_color);
+    draw_rect(x + 3, y + 7, x + 12, y + 9, line_color);
     //draw L
-	draw_rect(x + 20, y, x + 21, y + 17, line_color);
-    draw_rect(x + 22, y + 16, x + 32, y + 17, line_color);
+	draw_rect(x + 20, y, x + 22, y + 17, line_color);
+    draw_rect(x + 22, y + 15, x + 32, y + 17, line_color);
     //draw A
-    draw_rect(x + 44, y, x + 47, y + 1, line_color); 
-    draw_rect(x + 43, y + 2, x + 44, y + 4, line_color);
-    draw_rect(x + 42, y + 5, x + 43, y + 7, line_color);
-    draw_rect(x + 41, y + 8, x + 42, y + 10, line_color);
-    draw_rect(x + 40, y + 11, x + 41, y + 13, line_color);
-    draw_rect(x + 39, y + 14, x + 40, y + 16, line_color);
-    draw_rect(x + 38, y + 17, x + 39, y + 17, line_color);
-    draw_rect(x + 47, y + 2, x + 48, y + 4, line_color);
-    draw_rect(x + 48, y + 5, x + 49, y + 7, line_color);
-    draw_rect(x + 49, y + 8, x + 50, y + 10, line_color);
-    draw_rect(x + 50, y + 11, x + 51, y + 13, line_color);
-    draw_rect(x + 51, y + 14, x + 52, y + 16, line_color);
-    draw_rect(x + 52, y + 17, x + 53, y + 17, line_color);
-    draw_rect(x + 43, y + 9, x + 48, y + 10, line_color);
+    draw_rect(x + 44, y, x + 48, y + 1, line_color); 
+    draw_rect(x + 43, y + 2, x + 45, y + 4, line_color);
+    draw_rect(x + 42, y + 5, x + 44, y + 7, line_color);
+    draw_rect(x + 41, y + 8, x + 43, y + 10, line_color);
+    draw_rect(x + 40, y + 11, x + 42, y + 13, line_color);
+    draw_rect(x + 39, y + 14, x + 41, y + 16, line_color);
+    draw_rect(x + 38, y + 17, x + 40, y + 17, line_color);
+    draw_rect(x + 47, y + 2, x + 49, y + 4, line_color);
+    draw_rect(x + 48, y + 5, x + 50, y + 7, line_color);
+    draw_rect(x + 49, y + 8, x + 51, y + 10, line_color);
+    draw_rect(x + 50, y + 11, x + 52, y + 13, line_color);
+    draw_rect(x + 51, y + 14, x + 53, y + 16, line_color);
+    draw_rect(x + 52, y + 17, x + 54, y + 17, line_color);
+    draw_rect(x + 43, y + 9, x + 49, y + 11, line_color);
     //draw P
-    draw_rect(x + 58, y, x + 59, y + 17, line_color); 
-    draw_rect(x + 60, y, x + 65, y + 1, line_color);
-    draw_rect(x + 66, y + 1, x + 68, y + 1, line_color);
+    draw_rect(x + 58, y, x + 60, y + 17, line_color); 
+    draw_rect(x + 61, y, x + 66, y + 1, line_color);
+    draw_rect(x + 67, y + 1, x + 69, y + 1, line_color);
     draw_rect(x + 67, y + 2, x + 70, y + 2, line_color);
     draw_rect(x + 69, y + 3, x + 71, y + 3, line_color);
-    draw_rect(x + 70, y + 4, x + 71, y + 5, line_color);
+    draw_rect(x + 69, y + 4, x + 71, y + 5, line_color);
     draw_rect(x + 69, y + 6, x + 71, y + 6, line_color);
     draw_rect(x + 67, y + 7, x + 70, y + 7, line_color);
-    draw_rect(x + 66, y + 8, x + 68, y + 8, line_color);
-    draw_rect(x + 60, y + 8, x + 65, y + 9, line_color);
+    draw_rect(x + 67, y + 8, x + 69, y + 8, line_color);
+    draw_rect(x + 61, y + 8, x + 66, y + 9, line_color);
     //draw P
-    draw_rect(x + 77, y, x + 78, y + 17, line_color); 
-    draw_rect(x + 79, y, x + 84, y + 1, line_color);
-    draw_rect(x + 85, y + 1, x + 87, y + 1, line_color);
+    draw_rect(x + 77, y, x + 79, y + 17, line_color); 
+    draw_rect(x + 80, y, x + 85, y + 1, line_color);
+    draw_rect(x + 86, y + 1, x + 88, y + 1, line_color);
     draw_rect(x + 86, y + 2, x + 89, y + 2, line_color);
     draw_rect(x + 88, y + 3, x + 90, y + 3, line_color);
-    draw_rect(x + 89, y + 4, x + 90, y + 5, line_color);
+    draw_rect(x + 88, y + 4, x + 90, y + 5, line_color);
     draw_rect(x + 88, y + 6, x + 90, y + 6, line_color);
-    draw_rect(x + 86, y + 7, x + 89, y + 7, line_color);
-    draw_rect(x + 85, y + 8, x + 87, y + 8, line_color);
-    draw_rect(x + 79, y + 8, x + 84, y + 9, line_color);
+    draw_rect(x + 86, y + 7, x + 89 , y + 7, line_color);
+    draw_rect(x + 86, y + 8, x + 88, y + 8, line_color);
+    draw_rect(x + 80, y + 8, x + 85, y + 9, line_color);
     //draw Y
-    draw_rect(x + 95, y, x + 96, y, line_color); 
-    draw_rect(x + 96, y + 1, x + 97, y + 2, line_color);
-    draw_rect(x + 97, y + 3, x + 98, y + 3, line_color);
-    draw_rect(x + 98, y + 4, x + 99, y + 5, line_color);
-    draw_rect(x + 99, y + 6, x + 100, y + 6, line_color);
-    draw_rect(x + 100, y + 7, x + 101, y + 7, line_color);
+    draw_rect(x + 95, y, x + 97, y, line_color); 
+    draw_rect(x + 96, y + 1, x + 98, y + 2, line_color);
+    draw_rect(x + 97, y + 3, x + 99, y + 3, line_color);
+    draw_rect(x + 98, y + 4, x + 100, y + 5, line_color);
+    draw_rect(x + 99, y + 6, x + 101, y + 6, line_color);
+    draw_rect(x + 100, y + 7, x + 102, y + 7, line_color);
     draw_rect(x + 101, y + 8, x + 104, y + 8, line_color);
-    draw_rect(x + 109, y, x + 110, y, line_color);
-    draw_rect(x + 108, y + 1, x + 109, y + 2, line_color);
-    draw_rect(x + 107, y + 3, x + 108, y + 3, line_color);
-    draw_rect(x + 106, y + 4, x + 107, y + 5, line_color);
-    draw_rect(x + 105, y + 6, x + 106, y + 6, line_color);
-    draw_rect(x + 104, y + 7, x + 105, y + 7, line_color);
-    draw_rect(x + 102, y + 9, x + 103, y + 17, line_color);
+    draw_rect(x + 108, y, x + 110, y, line_color);
+    draw_rect(x + 107, y + 1, x + 109, y + 2, line_color);
+    draw_rect(x + 106, y + 3, x + 108, y + 3, line_color);
+    draw_rect(x + 105, y + 4, x + 107, y + 5, line_color);
+    draw_rect(x + 104, y + 6, x + 106, y + 6, line_color);
+    draw_rect(x + 103, y + 7, x + 105, y + 7, line_color);
+    draw_rect(x + 101, y + 9, x + 104, y + 17, line_color);
 
     //starting point of B
     int bird_x = x + 130;
+
     //draw B
-    draw_rect(bird_x + 1, y, bird_x + 2, y + 17, line_color); 
-    draw_rect(bird_x + 3, y, bird_x + 8, y + 1, line_color);
-    draw_rect(bird_x + 9, y + 1, bird_x + 11, y + 1, line_color);
+    draw_rect(bird_x + 1, y, bird_x + 3, y + 17, line_color); 
+    draw_rect(bird_x + 4, y, bird_x + 9, y + 1, line_color);
+    draw_rect(bird_x + 10, y + 1, bird_x + 12, y + 1, line_color);
     draw_rect(bird_x + 10, y + 2, bird_x + 13, y + 2, line_color);
     draw_rect(bird_x + 12, y + 3, bird_x + 14, y + 3, line_color);
-    draw_rect(bird_x + 13, y + 4, bird_x + 14, y + 5, line_color);
+    draw_rect(bird_x + 12, y + 4, bird_x + 14, y + 5, line_color);
     draw_rect(bird_x + 12, y + 6, bird_x + 14, y + 6, line_color);
     draw_rect(bird_x + 10, y + 7, bird_x + 13, y + 7, line_color);
-    draw_rect(bird_x + 3, y + 8, bird_x + 11, y + 9, line_color);
-    draw_rect(bird_x + 3, y + 16, bird_x + 8, y + 17, line_color);
-    draw_rect(bird_x + 9, y + 16, bird_x + 11, y + 16, line_color);
+    draw_rect(bird_x + 4, y + 8, bird_x + 12, y + 9, line_color);
+    draw_rect(bird_x + 4, y + 16, bird_x + 9, y + 17, line_color);
+    draw_rect(bird_x + 10, y + 16, bird_x + 12, y + 16, line_color);
     draw_rect(bird_x + 10, y + 15, bird_x + 13, y + 15, line_color);
     draw_rect(bird_x + 12, y + 14, bird_x + 14, y + 14, line_color);
-    draw_rect(bird_x + 13, y + 12, bird_x + 14, y + 13, line_color);
+    draw_rect(bird_x + 12, y + 12, bird_x + 14, y + 13, line_color);
     draw_rect(bird_x + 12, y + 11, bird_x + 14, y + 11, line_color);
     draw_rect(bird_x + 10, y + 10, bird_x + 13, y + 10, line_color);
     //draw I
-    draw_rect(bird_x + 21, y, bird_x + 28, y + 1, line_color); 
-    draw_rect(bird_x + 24, y + 2, bird_x + 25, y + 15, line_color);
-    draw_rect(bird_x + 21, y + 16, bird_x + 28, y + 17, line_color);
+    draw_rect(bird_x + 21, y, bird_x + 30, y + 2, line_color); 
+    draw_rect(bird_x + 24, y + 2, bird_x + 27, y + 15, line_color);
+    draw_rect(bird_x + 21, y + 15, bird_x + 30, y + 17, line_color);
     //draw R
-    draw_rect(bird_x + 35, y, bird_x + 36, y + 17, line_color); 
-    draw_rect(bird_x + 37, y, bird_x + 42, y + 1, line_color);
-    draw_rect(bird_x + 43, y + 1, bird_x + 45, y + 1, line_color);
-    draw_rect(bird_x + 44, y + 2, bird_x + 47, y + 2, line_color);
-    draw_rect(bird_x + 46, y + 3, bird_x + 48, y + 3, line_color);
-    draw_rect(bird_x + 47, y + 4, bird_x + 48, y + 5, line_color);
-    draw_rect(bird_x + 46, y + 6, bird_x + 48, y + 6, line_color);
-    draw_rect(bird_x + 44, y + 7, bird_x + 47, y + 7, line_color);
-    draw_rect(bird_x + 43, y + 8, bird_x + 45, y + 8, line_color);
-    draw_rect(bird_x + 37, y + 8, bird_x + 42, y + 9, line_color);
-    draw_rect(bird_x + 43, y + 9, bird_x + 43, y + 10, line_color);
-	draw_rect(bird_x + 44, y + 10, bird_x + 44, y + 10, line_color);
-    draw_rect(bird_x + 44, y + 11, bird_x + 45, y + 11, line_color);
-    draw_rect(bird_x + 45, y + 12, bird_x + 46, y + 13, line_color);
-    draw_rect(bird_x + 46, y + 14, bird_x + 47, y + 14, line_color);
-    draw_rect(bird_x + 47, y + 15, bird_x + 48, y + 16, line_color);
-    draw_rect(bird_x + 48, y + 17, bird_x + 49, y + 17, line_color);
+    draw_rect(bird_x + 37, y, bird_x + 39, y + 17, line_color); 
+    draw_rect(bird_x + 40, y, bird_x + 45, y + 1, line_color);
+    draw_rect(bird_x + 46, y + 1, bird_x + 48, y + 1, line_color);
+    draw_rect(bird_x + 46, y + 2, bird_x + 49, y + 2, line_color);
+    draw_rect(bird_x + 48, y + 3, bird_x + 50, y + 3, line_color);
+    draw_rect(bird_x + 48, y + 4, bird_x + 50, y + 5, line_color);
+    draw_rect(bird_x + 48, y + 6, bird_x + 50, y + 6, line_color);
+    draw_rect(bird_x + 46, y + 7, bird_x + 49, y + 7, line_color);
+    draw_rect(bird_x + 46, y + 8, bird_x + 48, y + 8, line_color);
+    draw_rect(bird_x + 40, y + 8, bird_x + 45, y + 9, line_color);
+    draw_rect(bird_x + 43, y + 9, bird_x + 45, y + 10, line_color);
+	draw_rect(bird_x + 44, y + 10, bird_x + 46, y + 10, line_color);
+    draw_rect(bird_x + 45, y + 11, bird_x + 47, y + 11, line_color);
+    draw_rect(bird_x + 46, y + 12, bird_x + 48, y + 13, line_color);
+    draw_rect(bird_x + 47, y + 14, bird_x + 49, y + 14, line_color);
+    draw_rect(bird_x + 48, y + 15, bird_x + 50, y + 16, line_color);
+    draw_rect(bird_x + 49, y + 17, bird_x + 51, y + 17, line_color);
     //draw D
-    draw_rect(bird_x + 54, y, bird_x + 55, y + 17, line_color); 
-    draw_rect(bird_x + 56, y, bird_x + 58, y + 1, line_color);
-    draw_rect(bird_x + 59, y + 1, bird_x + 61, y + 2, line_color);
-    draw_rect(bird_x + 62, y + 2, bird_x + 63, y + 3, line_color); 
-    draw_rect(bird_x + 64, y + 3, bird_x + 65, y + 4, line_color);
-    draw_rect(bird_x + 65, y + 5, bird_x + 66, y + 6, line_color);
-    draw_rect(bird_x + 66, y + 7, bird_x + 67, y + 10, line_color);
-    draw_rect(bird_x + 56, y + 16, bird_x + 58, y + 17, line_color);
-    draw_rect(bird_x + 59, y + 15, bird_x + 61, y + 16, line_color);
-    draw_rect(bird_x + 62, y + 14, bird_x + 63, y + 15, line_color); 
-    draw_rect(bird_x + 64, y + 13, bird_x + 65, y + 14, line_color);
-    draw_rect(bird_x + 65, y + 11, bird_x + 66, y + 12, line_color);
+    draw_rect(bird_x + 57, y, bird_x + 59, y + 17, line_color); 
+    draw_rect(bird_x + 60, y, bird_x + 63, y + 1, line_color);
+    draw_rect(bird_x + 64, y + 1, bird_x + 65, y + 2, line_color);
+    draw_rect(bird_x + 65, y + 2, bird_x + 67, y + 3, line_color); 
+    draw_rect(bird_x + 66, y + 3, bird_x + 68, y + 4, line_color);
+    draw_rect(bird_x + 67, y + 5, bird_x + 69, y + 6, line_color);
+    draw_rect(bird_x + 68, y + 7, bird_x + 70, y + 10, line_color);
+    draw_rect(bird_x + 60, y + 16, bird_x + 63, y + 17, line_color);
+    draw_rect(bird_x + 64, y + 15, bird_x + 65, y + 16, line_color);
+    draw_rect(bird_x + 65, y + 14, bird_x + 67, y + 15, line_color); 
+    draw_rect(bird_x + 66, y + 13, bird_x + 68, y + 14, line_color);
+    draw_rect(bird_x + 67, y + 11, bird_x + 69, y + 12, line_color);
 }
