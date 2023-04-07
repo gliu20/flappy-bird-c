@@ -773,10 +773,10 @@ void draw_game_over(game_state_t *game) {
        // strcat(text_for_score,score);
 
         //use character buffer
-        video_text(29, 19, text_for_score);
-        video_text(29, 27, text_for_best_score);
-        video_text(28, 35, text_for_restart);
-        video_text(26, 43, text_for_menu);
+        video_text(27, 19, text_for_score);
+        video_text(27, 27, text_for_best_score);
+        video_text(27, 35, text_for_restart);
+        video_text(25, 43, text_for_menu);
 
         draw_score(game->score, 200, 67);
         draw_score(game->best_score, 200, 100);
@@ -798,10 +798,10 @@ void erase_game_over_texts(){
     char text_for_menu[] = "                             \0";
 
     //use character buffer
-    video_text(29, 19, text_for_score);
-    video_text(29, 27, text_for_best_score);
-    video_text(28, 35, text_for_restart);
-    video_text(26, 43, text_for_menu);
+    video_text(27, 19, text_for_score);
+    video_text(27, 27, text_for_best_score);
+    video_text(27, 35, text_for_restart);
+    video_text(25, 43, text_for_menu);
 }
 
 void draw_menu(game_state_t *game, bird_t bird) {
@@ -813,17 +813,17 @@ void draw_menu(game_state_t *game, bird_t bird) {
         //display "FLAPPY BIRD"
         //display "PRESS SPACE TO LET THE BIRD JUMP"
         //display "PRESS ENTER TO START"
+        draw_flappy_bird(85, 45, BLACK);
         draw_flappy_bird(87, 45, BLACK);
-        draw_flappy_bird(89, 45, BLACK);
-        draw_flappy_bird(88, 44, BLACK);
-        draw_flappy_bird(88, 46, BLACK);
-        draw_flappy_bird(88, 45, WHITE);
+        draw_flappy_bird(86, 44, BLACK);
+        draw_flappy_bird(86, 46, BLACK);
+        draw_flappy_bird(86, 45, WHITE);
         char text_for_instruction[] = "PRESS SPACE TO LET THE BIRD JUMP\0";
         char text_to_display[] = "PRESS ENTER TO START\0";
 
         //use character buffer
-        video_text(30, 30, text_for_instruction);
-        video_text(36, 44, text_to_display);
+        video_text(31, 30, text_for_instruction);
+        video_text(37, 44, text_to_display);
 
         //check whether Enter has pressed
         change_mode(game);
@@ -839,8 +839,8 @@ void erase_menu_texts(){
     char text_to_erase_display[] = "                    \0";
 
     //use character buffer
-    video_text(30, 30, text_to_erase_instruction);
-    video_text(36, 44, text_to_erase_display);
+    video_text(31, 30, text_to_erase_instruction);
+    video_text(37, 44, text_to_erase_display);
 }
 
 void draw_grasses(grass_t grass[]){
