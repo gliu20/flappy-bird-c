@@ -740,12 +740,12 @@ void draw_game_over(game_state_t *game) {
        // strcat(text_for_score,score);
 
         //use character buffer
-        video_text(36, 22, text_for_score);
-        video_text(37, 27, text_for_best_score);
-        video_text(28, 32, text_for_restart);
-        video_text(26, 42, text_for_menu);
+        video_text(29, 19, text_for_score);
+        video_text(29, 27, text_for_best_score);
+        video_text(28, 35, text_for_restart);
+        video_text(26, 43, text_for_menu);
 
-        draw_score(game->score, 200, 80);
+        draw_score(game->score, 200, 67);
         draw_score(game->best_score, 200, 100);
 
         //check whether Enter or Back has pressed
@@ -759,16 +759,16 @@ void erase_game_over_texts(){
     //erase "BEST: "
     //erase "PRESS ENTER TO RESTART"
     //erase "PRESS BACK TO GO TO MENU"
-    char text_for_score[] = "                        \0 ";
-    char text_for_best_score[] = "                     \0 ";
+    char text_for_score[] = "        \0 ";
+    char text_for_best_score[] = "       \0 ";
     char text_for_restart[] = "                         \0";
     char text_for_menu[] = "                             \0";
 
     //use character buffer
-    video_text(36, 22, text_for_score);
-    video_text(37, 27, text_for_best_score);
-    video_text(28, 32, text_for_restart);
-    video_text(26, 42, text_for_menu);
+    video_text(29, 19, text_for_score);
+    video_text(29, 27, text_for_best_score);
+    video_text(28, 35, text_for_restart);
+    video_text(26, 43, text_for_menu);
 }
 
 void draw_menu(game_state_t *game, bird_t bird) {
