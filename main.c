@@ -761,25 +761,22 @@ void draw_game_over(game_state_t *game) {
     while (game -> mode == MODE_GAME_OVER) {
         draw_background(game);
 
-        //display "GAME OVER"
-        //display "SCORE: "
-        //display "BEST: "
-        //display "PRESS ENTER TO RESTART"
-        //display "PRESS BACK TO GO TO MENU"
+        //get the outline of "GAME OVER"
         draw_word_game_over(74, 30, BLACK);
 		draw_word_game_over(76, 30, BLACK);
 		draw_word_game_over(75, 29, BLACK);
 		draw_word_game_over(75, 31, BLACK);
+        //display "GAME OVER"
         draw_word_game_over(75, 30, WHITE);
+
+        //display "SCORE: "
+        //display "BEST: "
+        //display "PRESS ENTER TO RESTART"
+        //display "PRESS BACK TO GO TO MENU"
         char text_for_score[] = "SCORE:\0";
         char text_for_best_score[] = "BEST:\0";
         char text_for_restart[] = "PRESS ENTER TO PLAY AGAIN\0";
         char text_for_menu[] = "PRESS BACKSPACE TO GO TO MENU\0";
-
-       // char score[10];
-        // 10 here is a string length we dont follow itoa spec
-       // int_to_string(game -> score, score, 10);
-       // strcat(text_for_score,score);
 
         //use character buffer
         video_text(27, 19, text_for_score);
@@ -820,14 +817,16 @@ void draw_menu(game_state_t *game, bird_t bird) {
         draw_background(game);
         draw_bird(bird);
 
-        //display "FLAPPY BIRD"
-        //display "PRESS SPACE TO LET THE BIRD JUMP"
-        //display "PRESS ENTER TO START"
+        //get the outline of  "FLAPPY BIRD"
         draw_flappy_bird(85, 45, BLACK);
         draw_flappy_bird(87, 45, BLACK);
         draw_flappy_bird(86, 44, BLACK);
         draw_flappy_bird(86, 46, BLACK);
+         //display "FLAPPY BIRD"
         draw_flappy_bird(86, 45, WHITE);
+        
+        //display "PRESS SPACE TO LET THE BIRD JUMP"
+        //display "PRESS ENTER TO START"
         char text_for_instruction[] = "PRESS SPACE TO LET THE BIRD JUMP\0";
         char text_to_display[] = "PRESS ENTER TO START\0";
 
