@@ -889,17 +889,26 @@ void draw_background(game_state_t *game) {
         draw_rect(0, 0, SCROLL_VIEW_AMOUNT * 3, SKY_THICKNESS - 1, SKY);
 
         // Clear column for bird
-        draw_rect(BIRD_INITIAL_X, 0, BIRD_INITIAL_X + BIRD_WIDTH, SKY_THICKNESS - 1, SKY);
+        draw_rect(BIRD_INITIAL_X - 2, 0, BIRD_INITIAL_X + BIRD_WIDTH, SKY_THICKNESS - 1, SKY);
 
         // Clear at each pipe
         for (int i = 0; i < NUM_PIPES; i++) {
             pipe_t *pipe = &game->pipes[i];
             int pipe_x = pipe->x + PIPE_WIDTH / 2;
 
-            // Clear a column at the curr pipe coordinate            
+            // Clear a column at the curr pipe coordinate 
             draw_rect(pipe_x, 0, pipe_x + SCROLL_VIEW_AMOUNT * 3, SKY_THICKNESS - 1, SKY);
         }
     }
+
+    // Clear out space for score
+    draw_rect(
+        SCORE_POS_X - SCORE_CHAR_WIDTH * SCORE_CHAR_SCALE * 3, 
+        SCORE_POS_Y, 
+        SCORE_POS_X + SCORE_CHAR_WIDTH * SCORE_CHAR_SCALE, 
+        SCORE_POS_Y + SCORE_CHAR_HEIGHT, 
+        SKY
+    );
     
 
     //draw ground
