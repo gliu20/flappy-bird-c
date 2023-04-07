@@ -242,6 +242,10 @@ typedef struct pipe {
     // The height of the void where the bird
     // can fit through
     int void_height;
+
+    // Keeps track of whether we already added going
+    // through this pipe to the score
+    bool did_score_update;
 } pipe_t;
 
 
@@ -357,6 +361,7 @@ void initialize_pipe(pipe_t *pipe, int i) {
     pipe->y = rand() % (RESOLUTION_Y - PIPE_VOID_HEIGHT * 2 - TOTAL_FLOOR_HEIGHT) + PIPE_VOID_HEIGHT;
     pipe->width = PIPE_WIDTH;
     pipe->void_height = PIPE_VOID_HEIGHT;
+    pipe->did_score_update = false;
 }
 
 void initialize_grass(grass_t *grass, int i) {
@@ -818,12 +823,6 @@ void do_scroll_view(game_state_t *game) {
         // at end of screen
         if (pipe->x < -PIPE_WIDTH / 2) {
             initialize_pipe(pipe, NUM_PIPES);
-
-            // Before resetting when we've last seen a pipe, we must
-            // request a score update so in case it's been overdue
-            // we don't accidentally miss out on updating the score
-            do_update_score(game);
-            game->time_since_seen_pipe = 0;
         }
         pipe->x -= SCROLL_VIEW_AMOUNT;
     }
@@ -857,9 +856,16 @@ void do_scroll_view(game_state_t *game) {
 }
 
 void do_update_score(game_state_t *game) {
-    if (game->time_since_seen_pipe++ > SCORE_UPDATE_TIME_OFFSET) {
-        game->score++;
-        game->time_since_seen_pipe = 0;
+    for (int i = 0; i < NUM_PIPES; i++) {
+        pipe_t *pipe = &game->pipes[i];
+
+        bool did_pipe_pass_bird = pipe->x < game->bird.x;
+        bool did_score_update = pipe->did_score_update;
+
+        if (did_pipe_pass_bird && !did_score_update) {
+            pipe->did_score_update = true;
+            game->score++;
+        }
     }
 }
 
