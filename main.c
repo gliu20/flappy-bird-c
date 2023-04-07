@@ -835,15 +835,28 @@ void do_bird_jump(bird_t* bird){
 
 void do_scroll_pipes(game_state_t *game) {
 
-    // Scroll pipes 
+    pipe_t *prev_pipe = &game->pipes[NUM_PIPES - 1];
+    pipe_t *curr_pipe;
+    
+    // Wrap around pipes
+    for (int i = 0; i < NUM_PIPES; i++) {
+        pipe_t *curr_pipe = &game->pipes[i];
+
+        if (curr_pipe->x < -PIPE_WIDTH / 2) {
+            // Place pipe to the right of the previous pipe
+            // since we know the previous pipe is the one that's on
+            // the very right of the screen and is offscreen
+            curr_pipe->did_score_update = false;
+            curr_pipe->x = prev_pipe->x + PIPE_SPACING;
+        }
+
+        prev_pipe = curr_pipe;
+    }
+
+    // Scroll pipes
     for (int i = 0; i < NUM_PIPES; i++) {
         pipe_t *pipe = &game->pipes[i];
 
-        // Index NUM_PIPES is to rename this pipe to be the last pipe
-        // at end of screen
-        if (pipe->x < -PIPE_WIDTH / 2) {
-            initialize_pipe(pipe, NUM_PIPES);
-        }
         pipe->x -= SCROLL_VIEW_AMOUNT;
     }
 }
