@@ -811,6 +811,7 @@ void erase_game_over_texts(){
 
 void draw_menu(game_state_t *game, bird_t bird) {
     clear_read_FIFO();
+    game -> best_score = 0;
     while (game -> mode == MODE_MENU) {
         draw_background(game);
         draw_bird(bird);
