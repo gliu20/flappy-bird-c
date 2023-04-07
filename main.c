@@ -989,7 +989,7 @@ bool did_collide(bird_t bird, pipe_t pipe){
 
 
 inline bool bird_in_screen(bird_t bird) {
-    return is_out_of_bounds(bird.y, 0, RESOLUTION_Y - TOTAL_FLOOR_HEIGHT);
+    return is_out_of_bounds(bird.y, 0, RESOLUTION_Y - TOTAL_FLOOR_HEIGHT - BIRD_HEIGHT);
 }
 
 // Game logic
