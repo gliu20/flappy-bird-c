@@ -186,7 +186,7 @@ int digits_image[NUM_DIGITS][SCORE_CHAR_HEIGHT][SCORE_CHAR_WIDTH] = {
     // Six
     {
         { 0, 0, 0, 0 },
-        { 0, 1, 1, 0 },
+        { 1, 1, 1, 0 },
         { 1, 0, 0, 0 },
         { 1, 1, 1, 0 },
         { 1, 0, 1, 0 },
