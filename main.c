@@ -250,14 +250,12 @@ typedef struct pipe {
     bool did_score_update;
 } pipe_t;
 
-
 typedef struct grass {
     // Unlike pipe, grass coordinates are not centered for
     // ease of programming
     int left_x;
     int right_x;
 } grass_t;
-
 
 typedef struct cloud {
     int left_x;
@@ -267,7 +265,6 @@ typedef struct cloud {
 } cloud_t;
 
 typedef short int color_t;
-
 
 typedef struct game_state {
     grass_t grasses[NUM_GRASS_SQUARE];
@@ -282,8 +279,6 @@ typedef struct game_state {
     // Used to keep track of when we passed a pipe
     int time_since_seen_pipe;
 } game_state_t;
-
-
 
 // Helpers
 bool bird_in_screen(bird_t bird);
@@ -707,6 +702,9 @@ void draw_game_over(game_state_t *game) {
         video_text(37, 27, text_for_best_score);
         video_text(29, 32, text_for_restart);
         video_text(26, 42, text_for_menu);
+
+        draw_score(game->score, 200, 80);
+        draw_score(game->best_score, 200, 100);
 
         //check whether Enter or Back has pressed
         change_mode(game);
