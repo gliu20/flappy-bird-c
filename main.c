@@ -60,7 +60,7 @@
 #define SCORE_UPDATE_TIME_OFFSET 10
 
 /* Pipes */
-#define NUM_PIPES 5
+#define NUM_PIPES 4
 #define PIPE_COLOR 0x06F0
 #define PIPE_WIDTH 30
 #define PIPE_HEAD_HEIGHT 15
@@ -836,7 +836,6 @@ void do_bird_jump(bird_t* bird){
 void do_scroll_pipes(game_state_t *game) {
 
     pipe_t *prev_pipe = &game->pipes[NUM_PIPES - 1];
-    pipe_t *curr_pipe;
     
     // Wrap around pipes
     for (int i = 0; i < NUM_PIPES; i++) {
