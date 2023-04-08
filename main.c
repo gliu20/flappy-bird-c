@@ -1,5 +1,3 @@
-#define USE_CPULATOR true
-
 /* This files provides address values that exist in the system */
 #define SDRAM_BASE            0xC0000000
 #define FPGA_ONCHIP_BASE      0xC8000000
@@ -868,38 +866,6 @@ void draw_background(game_state_t *game) {
             draw_pixel_optim(i, j, sky_img[j][i]);
         }
     }
-
-/*
-    if (!USE_CPULATOR || game->frame_count <= 3 || game->mode != MODE_GAME) {
-        // Draw sky normally if not in game
-        draw_rect(0, 0, RESOLUTION_X, SKY_THICKNESS - 1, SKY);
-    }
-    else {
-        // Use optimized procedure while in game
-        // Clear column for first pipe
-        draw_rect(0, 0, SCROLL_VIEW_AMOUNT * 3, SKY_THICKNESS - 1, SKY);
-
-        // Clear column for bird
-        draw_rect(BIRD_INITIAL_X - 2, 0, BIRD_INITIAL_X + BIRD_WIDTH, SKY_THICKNESS - 1, SKY);
-
-        // Clear at each pipe
-        for (int i = 0; i < NUM_PIPES; i++) {
-            pipe_t *pipe = &game->pipes[i];
-            int pipe_x = pipe->x + PIPE_WIDTH / 2;
-
-            // Clear a column at the curr pipe coordinate 
-            draw_rect(pipe_x, 0, pipe_x + SCROLL_VIEW_AMOUNT * 3, SKY_THICKNESS - 1, SKY);
-        }
-
-        // Clear out space for score
-        draw_rect(
-            SCORE_POS_X - SCORE_CHAR_WIDTH * SCORE_CHAR_SCALE * 3, 
-            SCORE_POS_Y, 
-            SCORE_POS_X + SCORE_CHAR_WIDTH * SCORE_CHAR_SCALE, 
-            SCORE_POS_Y + SCORE_CHAR_HEIGHT * SCORE_CHAR_SCALE + 1, 
-            SKY
-        );
-    }*/
     
 
     //draw ground
