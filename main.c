@@ -49,7 +49,6 @@
 #define BIRD_INITIAL_X 20
 #define BIRD_INITIAL_Y 100
 #define BIRD_INITIAL_VELOCITY -0.1
-#define BIRD_INITIAL_ANGLE 0
 #define BIRD_JUMP_VELOCITY 3.2
 #define BIRD_GRAVITY 0.4
 
@@ -206,9 +205,6 @@ typedef struct bird {
     // y_velocity is a double so we can
     // make gravity not jumpy
     double y_velocity;
-
-    // For animating angle of bird as we tap
-    double angle;
 } bird_t;
 
 typedef struct pipe {
@@ -392,7 +388,6 @@ void initialize_bird(bird_t *bird) {
     bird->x = BIRD_INITIAL_X;
     bird->y = BIRD_INITIAL_Y;
     bird->y_velocity = BIRD_INITIAL_VELOCITY;
-    bird->angle = BIRD_INITIAL_ANGLE;
 }
 
 void initialize_screen(game_state_t *game) {
