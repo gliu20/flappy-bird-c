@@ -686,8 +686,6 @@ void draw_game(game_state_t *game) {
         next_frame();
     }
 
-    // Reset grass before switching to game over
-    initialize_grasses(game->grasses);
     game->mode = MODE_GAME_OVER;
 }
 
@@ -733,6 +731,7 @@ void draw_game_over(game_state_t *game) {
 
         //check whether Enter or Back has pressed
         change_mode(game);
+        do_scroll_grasses(game);
         next_frame();
     }
 }
@@ -787,6 +786,7 @@ void draw_menu(game_state_t *game, bird_t bird) {
 
         //check whether Enter has pressed
         change_mode(game);
+        do_scroll_grasses(game);
         next_frame();
     }
 }
