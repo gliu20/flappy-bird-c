@@ -335,9 +335,11 @@ void initialize_sky() {
         color_t color = sky_img_rle[i];
         int run_length = sky_img_rle[i + 1];
 
+        // Expand out runs of the same color
         for (int j = 0; j < run_length; j++) {
             sky_img[y][x++] = color;
 
+            // Convert to x,y coordinates
             if (x >= 320) {
                 x = 0;
                 y++;
