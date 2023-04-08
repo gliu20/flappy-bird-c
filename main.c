@@ -1,17 +1,8 @@
 /* This files provides address values that exist in the system */
 #define SDRAM_BASE            0xC0000000
-#define FPGA_ONCHIP_BASE      0xC8000000
 #define FPGA_CHAR_BASE        0xC9000000
 
 /* Cyclone V FPGA devices */
-#define LEDR_BASE             0xFF200000
-#define HEX3_HEX0_BASE        0xFF200020
-#define HEX5_HEX4_BASE        0xFF200030
-#define SW_BASE               0xFF200040
-#define KEY_BASE              0xFF200050
-#define TIMER_BASE            0xFF202000
-#define PIXEL_BUF_CTRL_BASE   0xFF203020
-#define CHAR_BUF_CTRL_BASE    0xFF203030
 #define PS2_BASE              0xFF200100
 
 
@@ -30,7 +21,6 @@
 #define SKY 0x96FF 
 #define LIGHT_GREEN 0xA6F0
 #define DARK_GREEN 0x0460
-// need add blank screen color
 #define BLACK 0x0
 
 
@@ -99,15 +89,10 @@
 #define ENTER_KEY 0x5A
 #define BACK_SPACE_KEY 0x66
 
-/* Macro for absolute value */
-#define ABS(x) (((x) > 0) ? (x) : -(x))
-
 /* Includes */
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <string.h>
-
 
 volatile int pixel_buffer_start;
 volatile int *pixel_ctrl_ptr = (int *) 0xFF203020;
@@ -299,6 +284,7 @@ void do_update_score(game_state_t *game);
 
 // Draw code
 void draw_background(game_state_t *game);
+void redraw_background(game_state_t *game);
 void draw_bird(bird_t bird);
 void draw_digit(int digit, int x_offset, int x, int y, color_t color);
 void draw_flappy_bird(int x, int y, color_t line_color);
@@ -359,7 +345,7 @@ int main(void) {
     }
 }
 
-
+// Initializers
 void initialize_sky() {
     int x = 0, y = 0;
     for (int i = 0; i < 12994; i += 2) {
@@ -377,7 +363,6 @@ void initialize_sky() {
     }
 }
 
-// Initializers
 void initialize_game(game_state_t *game) {
     game->mode = MODE_MENU;
     game->score = 0;
@@ -712,7 +697,7 @@ void draw_game(game_state_t *game) {
     game->frame_count = 0;
 
     while (!is_game_over(game)) {
-        draw_background(game);
+        redraw_background(game);
         draw_pipes(game->pipes);
         draw_bird(game->bird);
         draw_score(game->score, SCORE_POS_X, SCORE_POS_Y);
@@ -735,7 +720,7 @@ void draw_game_over(game_state_t *game) {
     clear_read_FIFO();
     do_update_best_score(game);
     while (game -> mode == MODE_GAME_OVER) {
-        draw_background(game);
+        redraw_background(game);
 
         //get the outline of "GAME OVER"
         draw_word_game_over(74, 30, BLACK);
@@ -798,7 +783,7 @@ void draw_menu(game_state_t *game, bird_t bird) {
     clear_read_FIFO();
     game -> best_score = 0;
     while (game -> mode == MODE_MENU) {
-        draw_background(game);
+        redraw_background(game);
         draw_bird(bird);
 
         //get the outline of  "FLAPPY BIRD"
@@ -886,6 +871,18 @@ void draw_background(game_state_t *game) {
 
     //draw ground
     draw_rect(0, RESOLUTION_Y - GROUND_THICKNESS + 1, RESOLUTION_X, RESOLUTION_Y, SAND);
+    //draw grass
+    draw_grasses(game->grasses);
+}
+
+void redraw_background(game_state_t *game){
+    // draw sky
+    for (int i = 0; i < RESOLUTION_X; i++) {
+        for (int j = 0; j < SKY_THICKNESS; j++) {
+            draw_pixel_optim(i, j, sky_img[j][i]);
+        }
+    }
+    
     //draw grass
     draw_grasses(game->grasses);
 }
