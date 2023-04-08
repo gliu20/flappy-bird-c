@@ -760,6 +760,14 @@ void draw_game_over(game_state_t *game) {
         video_text(27, 35, text_for_restart);
         video_text(25, 43, text_for_menu);
 
+        // button shape for press enter to play again
+        // and press backspace to go to menu
+        draw_rect(70, 130, RESOLUTION_X - 70, 130 + 22, ORANGE);
+        draw_rect(70, 162, RESOLUTION_X - 70, 162 + 22, ORANGE);
+        draw_rect_outline(70, 130, RESOLUTION_X - 70, 130 + 22, BLACK);
+        draw_rect_outline(70, 162, RESOLUTION_X - 70, 162 + 22, BLACK);
+
+
         draw_score(game->score, 200, 67);
         draw_score(game->best_score, 200, 100);
 
@@ -809,6 +817,14 @@ void draw_menu(game_state_t *game, bird_t bird) {
         //use character buffer
         video_text(31, 30, text_for_instruction);
         video_text(37, 44, text_to_display);
+
+        
+        // button shape for press enter to start
+        // and press space
+        draw_rect(90, 110, RESOLUTION_X - 40, 110 + 22, ORANGE);
+        draw_rect(90, 167, RESOLUTION_X - 40, 167 + 22, ORANGE);
+        draw_rect_outline(90, 110, RESOLUTION_X - 40, 110 + 22, BLACK);
+        draw_rect_outline(90, 167, RESOLUTION_X - 40, 167 + 22, BLACK);
 
         //check whether Enter has pressed
         change_mode(game);
