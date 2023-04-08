@@ -686,6 +686,8 @@ void draw_game(game_state_t *game) {
         next_frame();
     }
 
+    // Reset grass before switching to game over
+    initialize_grasses(game->grasses);
     game->mode = MODE_GAME_OVER;
 }
 
