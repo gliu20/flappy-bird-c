@@ -894,6 +894,9 @@ void do_scroll_pipes(game_state_t *game) {
             // the very right of the screen and is offscreen
             curr_pipe->did_score_update = false;
             curr_pipe->x = prev_pipe->x + PIPE_SPACING;
+			
+			// We also generate a new height for y position
+			curr_pipe->y = rand() % (RESOLUTION_Y - PIPE_VOID_HEIGHT * 2 - TOTAL_FLOOR_HEIGHT) + PIPE_VOID_HEIGHT;
         }
 
         prev_pipe = curr_pipe;
