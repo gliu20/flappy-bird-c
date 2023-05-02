@@ -298,7 +298,6 @@ void initialize_screen(game_state_t *game);
 
 // Screen/VGA
 void clear_read_FIFO();
-void clear_screen();
 void next_frame();
 void video_text(int x, int y, char * text_ptr);
 void wait_for_vsync();
@@ -1048,14 +1047,6 @@ void change_mode(game_state_t *game){
 }
 
 // Screen/VGA
-void clear_screen() {
-    for (int x = 0; x < RESOLUTION_X; x++) {
-        for (int y = 0; y < RESOLUTION_Y; y++) {
-            draw_pixel(x, y, BLACK);
-        }
-    }
-}
-
 void next_frame() {
     // Swap front and back buffers on vsync and update buffer pointer
     wait_for_vsync();
@@ -1075,7 +1066,7 @@ void wait_for_vsync() {
     }
 }
 
-//taken from DE1-SoC_Computer_ARM.pdf
+//taken from https://ftp.intel.com/Public/Pub/fpgaup/pub/Intel_Material/18.1/Computer_Systems/DE1-SoC/DE1-SoC_Computer_NiosII.pdf
 void video_text(int x, int y, char * text_ptr) {
     int offset;
     volatile char * character_buffer = (char *)FPGA_CHAR_BASE; // video character buffer
