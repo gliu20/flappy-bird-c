@@ -1,5 +1,6 @@
 # Flappy Bird
-
+## Online demo
+https://gliu20.github.io/flappy-bird-c/demo/
 ## How to play
 Run the program on a DE1-SoC board where a VGA screen and a PS/2 keyboard are connected. 
 If you don't have access to a DE1-SoC board, you can instead use CPUlator (https://cpulator.01xz.net/?sys=arm-de1soc), an online simulator of a computer system. (This is designed to be ran on an actual De1-Soc board so it'll be very slow on CPUlator.)
