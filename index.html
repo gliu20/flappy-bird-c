@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird Demo</title>
+</head>
+<body>
+    
+<canvas id="canvas" style="image-rendering: pixelated; width:100vmin; height: auto; position: absolute; inset: 0;"></canvas>
+<script src="flappy-bird.js"></script>
+<script>
+    canvas.width = 320;
+    canvas.height = 240;
+
+    const ctx = canvas.getContext("2d");
+    const next_frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+
+    const DE1SOC_KEY_CODE_TO_JS_CODES = {
+        32: SPACE_KEY, //SPACE_KEY: 0x29,
+        13: ENTER_KEY,//ENTER_KEY: 0x5A,
+        8: BACK_SPACE_KEY,//BACK_SPACE_KEY: 0x66
+    }
+    const pressed_keys = {};
+
+    document.body.addEventListener("keypress", function (evt) {
+        pressed_keys[DE1SOC_KEY_CODE_TO_JS_CODES[evt.keyCode] || 'null'] = true;
+    });
+    document.body.addEventListener("keydown", function (evt) {
+        pressed_keys[DE1SOC_KEY_CODE_TO_JS_CODES[evt.keyCode] || 'null'] = true;
+    });
+
+    main();
+
+    function rand() {
+        return (Math.random() * 0xFFFF) | 0;
+    }
+
+    function change_color(color) {
+        const r5 = (color & (0b11111 << 11)) >> 11;
+        const g6 = (color & (0b111111 << 5)) >> 5;
+        const b5 = color & 0b11111;
+
+        // https://stackoverflow.com/questions/2442576/how-does-one-convert-16-bit-rgb565-to-24-bit-rgb888
+        const r = ( r5 * 527 + 23 ) >> 6;
+        const g = ( g6 * 259 + 33 ) >> 6;
+        const b = ( b5 * 527 + 23 ) >> 6;
+
+        const test = Math.floor(color / 0xffff * 255);
+        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function fill_rect(x0, y0, x1, y1) {
+        ctx.fillRect(x0, y0, x1 - x0 + 1, y1 - y0 + 1);
+    }
+
+    function fill_text(x, y, text) {
+        ctx.font = "8px Arial"
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText(text, x, y);
+    }
+
+    function has_pressed_key(keyCode) {
+        return !!pressed_keys[keyCode];
+    }
+    function clear_pressed_key(keyCode) {
+        pressed_keys[keyCode] = false;
+    }
+</script>
+
+</body>
+</html>
